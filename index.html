@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KaranEDU – AI-Powered Offline-First Learning Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0B0F19;--bg2:#131929;--bg3:#1E293B;
+  --violet:#7C3AED;--violet2:#6D28D9;--blue:#2563EB;--blue2:#1D4ED8;
+  --amber:#F59E0B;--orange:#EA580C;--amber2:#FCD34D;
+  --text:#CBD5E1;--dim:#64748B;--white:#F1F5F9;
+  --border:rgba(124,58,237,0.18);--border2:rgba(37,99,235,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
+#cursor{position:fixed;width:10px;height:10px;background:var(--amber);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+#cursor-ring{position:fixed;width:36px;height:36px;border:1px solid var(--violet);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;opacity:0.6;}
+#particle-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;background:rgba(11,15,25,0.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none;}
+.logo-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 8px var(--amber));}
+.logo-icon svg{transition:transform 0.4s;}
+.nav-logo:hover .logo-icon svg{transform:rotate(10deg);}
+.nav-logo span{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--white);letter-spacing:0.02em;}
+.nav-logo span em{color:var(--amber);font-style:normal;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--dim);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.3s;}
+.nav-links a:hover{color:var(--amber);text-shadow:0 0 12px var(--amber);}
+.nav-cta{font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;padding:0.6rem 1.5rem;background:var(--amber);color:#000;text-decoration:none;border-radius:6px;letter-spacing:0.04em;transition:all 0.3s;box-shadow:0 0 0 0 rgba(245,158,11,0);}
+.nav-cta:hover{background:var(--amber2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,0.4);}
+
+/* HERO */
+#hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 2rem 4rem;}
+#hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(124,58,237,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 30%,transparent 80%);}
+.hero-row{display:flex;align-items:center;justify-content:center;gap:5rem;flex-wrap:wrap;max-width:1260px;margin:0 auto;}
+.hero-left{flex:1;min-width:320px;}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--amber);border:1px solid rgba(245,158,11,0.35);padding:0.35rem 1rem;border-radius:999px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:2rem;animation:pulse-border 2s infinite;}
+.hero-badge::before{content:'●';color:var(--amber);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0.2)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:1.05;color:var(--white);margin-bottom:0.4rem;}
+.hero-title .grad{background:linear-gradient(135deg,var(--violet),var(--blue),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub-label{font-family:'Space Mono',monospace;font-size:0.75rem;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;color:var(--violet);margin-bottom:1.75rem;}
+.hero-desc{max-width:580px;font-size:1.05rem;line-height:1.85;color:#94A3B8;margin-bottom:2.5rem;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-p{display:inline-flex;align-items:center;gap:0.6rem;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;padding:0.9rem 2rem;background:linear-gradient(135deg,var(--violet),var(--blue));color:#fff;text-decoration:none;border-radius:8px;letter-spacing:0.03em;transition:all 0.3s;box-shadow:0 0 0 0 rgba(124,58,237,0);}
+.btn-p:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(124,58,237,0.5);}
+.btn-s{display:inline-flex;align-items:center;gap:0.6rem;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:600;padding:0.9rem 2rem;background:transparent;border:1.5px solid rgba(245,158,11,0.5);color:var(--amber);text-decoration:none;border-radius:8px;letter-spacing:0.03em;transition:all 0.3s;}
+.btn-s:hover{border-color:var(--amber);background:rgba(245,158,11,0.1);transform:translateY(-3px);}
+.terminal{background:#080c14;border:1px solid rgba(124,58,237,0.25);border-radius:10px;padding:1.5rem;margin-top:2.5rem;max-width:520px;font-family:'Space Mono',monospace;font-size:0.74rem;line-height:2;position:relative;overflow:hidden;}
+.terminal::before{content:'● ● ●';position:absolute;top:0.6rem;left:1rem;color:var(--dim);font-size:0.5rem;letter-spacing:0.4rem;}
+.terminal-header{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.2em;text-align:center;padding-top:0.75rem;margin-bottom:0.5rem;}
+.t-cm{color:var(--dim);}.t-cmd{color:var(--violet);}.t-out{color:#34D399;}.t-warn{color:var(--amber);}.t-cur::after{content:'█';animation:blink 1s infinite;color:var(--amber);}
+.scroll-hint{margin-top:4rem;display:flex;flex-direction:column;align-items:center;gap:0.5rem;animation:float 3s ease-in-out infinite;}
+.scroll-hint span{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--dim);letter-spacing:0.2em;text-transform:uppercase;}
+.scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,var(--amber),transparent);}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* PHONE MOCK */
+.phone-scene{width:280px;height:580px;transform-style:preserve-3d;animation:r3d 8s ease-in-out infinite;filter:drop-shadow(0 0 50px rgba(124,58,237,0.3)) drop-shadow(0 0 100px rgba(245,158,11,0.1));}
+@keyframes r3d{0%{transform:rotateY(-12deg) rotateX(4deg)}50%{transform:rotateY(12deg) rotateX(-3deg)}100%{transform:rotateY(-12deg) rotateX(4deg)}}
+.ph-body{width:280px;height:580px;border-radius:38px;background:linear-gradient(145deg,#1a1f35,#0d1020);border:1.5px solid rgba(124,58,237,0.4);box-shadow:0 0 0 1px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06),0 30px 80px rgba(0,0,0,0.9);position:relative;overflow:hidden;}
+.ph-scr{position:absolute;inset:10px;border-radius:30px;background:#080c14;overflow:hidden;}
+.ph-notch{width:100px;height:26px;background:#080c14;border-radius:0 0 18px 18px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:10;}
+.ph-status{padding:10px 18px 0;display:flex;justify-content:space-between;}
+.ph-status span{font-family:'Space Mono',monospace;font-size:8px;color:var(--amber);}
+.ph-app-label{padding:4px 14px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--white);}
+.ph-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 14px;}
+.ph-btn{padding:8px 6px;border-radius:10px;text-align:center;font-family:'Space Grotesk',sans-serif;font-size:8px;font-weight:600;color:#fff;animation:btnGlow 2s ease-in-out infinite;}
+.ph-btn.chat{background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 0 10px rgba(124,58,237,0.6);animation-delay:0s;}
+.ph-btn.quiz{background:linear-gradient(135deg,#2563EB,#1D4ED8);box-shadow:0 0 10px rgba(37,99,235,0.6);animation-delay:0.5s;}
+.ph-btn.flash{background:linear-gradient(135deg,#EA580C,#C2410C);box-shadow:0 0 10px rgba(234,88,12,0.6);animation-delay:1s;}
+.ph-btn.plan{background:linear-gradient(135deg,#F59E0B,#D97706);box-shadow:0 0 10px rgba(245,158,11,0.6);animation-delay:1.5s;}
+@keyframes btnGlow{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.04);filter:brightness(1.2)}}
+.ph-chat-area{padding:8px 14px;}
+.ph-msg{margin-bottom:7px;display:flex;flex-direction:column;}
+.ph-msg.r .ph-bbl{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:10px 10px 10px 3px;padding:7px 10px;align-self:flex-start;}
+.ph-msg.s .ph-bbl{background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.35);border-radius:10px 10px 3px 10px;padding:7px 10px;align-self:flex-end;}
+.ph-bbl span{font-family:'Space Grotesk',sans-serif;font-size:7.5px;color:#CBD5E1;display:block;line-height:1.5;}
+.ph-tag{font-size:6.5px;color:var(--amber);margin-top:2px;}
+.ph-bar{margin:6px 14px;padding:5px 9px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:6px;display:flex;align-items:center;gap:5px;}
+.ph-bar span{font-family:'Space Mono',monospace;font-size:6px;color:var(--amber);}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:8rem 2rem;}
+.container{max-width:1200px;margin:0 auto;}
+.sec-label{font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--violet);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem;}
+.sec-label::before{content:'//';color:var(--amber);}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:800;color:var(--white);margin-bottom:1.5rem;line-height:1.1;}
+.sec-title .hl{background:linear-gradient(135deg,var(--violet),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sec-desc{max-width:580px;font-size:1rem;line-height:1.85;color:#94A3B8;}
+.reveal{opacity:0;transform:translateY(28px);transition:all 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* STATS */
+.stats-bar{display:flex;justify-content:center;flex-wrap:wrap;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(124,58,237,0.03);}
+.stat-item{padding:2.5rem 3rem;text-align:center;border-right:1px solid var(--border);flex:1;min-width:150px;}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--violet),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.stat-lbl{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--dim);letter-spacing:0.15em;text-transform:uppercase;margin-top:0.4rem;}
+
+/* FEATURE GRID */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;margin-top:0;background:rgba(124,58,237,0.1);}
+.feat-card{background:var(--bg2);padding:2.5rem 2rem;transition:all 0.35s;position:relative;overflow:hidden;cursor:default;}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--violet),var(--amber),transparent);transform:scaleX(0);transition:transform 0.4s;}
+.feat-card:hover::before{transform:scaleX(1);}
+.feat-card:hover{background:rgba(124,58,237,0.06);transform:translateY(-5px);}
+.feat-icon{font-size:2.2rem;margin-bottom:1.25rem;display:block;}
+.feat-card h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:var(--white);margin-bottom:0.75rem;}
+.feat-card p{font-size:0.87rem;line-height:1.75;color:#64748B;}
+.feat-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:0.6rem;padding:0.2rem 0.7rem;margin-top:0.75rem;border:1px solid rgba(245,158,11,0.3);color:var(--amber);border-radius:4px;letter-spacing:0.08em;}
+
+/* PLAYGROUND */
+#playground{background:linear-gradient(180deg,var(--bg) 0%,#0d1220 60%,var(--bg) 100%);}
+.playground-wrap{margin-top:3rem;background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg3);overflow-x:auto;}
+.tab-btn{font-family:'Space Mono',monospace;font-size:0.7rem;padding:1rem 1.5rem;cursor:pointer;border:none;background:none;color:var(--dim);letter-spacing:0.08em;white-space:nowrap;transition:all 0.3s;border-bottom:2px solid transparent;}
+.tab-btn.active{color:var(--amber);border-bottom-color:var(--amber);background:rgba(245,158,11,0.05);}
+.tab-btn:hover:not(.active){color:var(--text);}
+.tab-content{display:none;padding:2rem;}
+.tab-content.active{display:block;}
+
+/* Chat simulator */
+.chat-wrap{max-width:600px;margin:0 auto;}
+.chat-messages{background:#080c14;border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:1.5rem;height:280px;overflow-y:auto;margin-bottom:1rem;display:flex;flex-direction:column;gap:1rem;}
+.chat-msg{display:flex;flex-direction:column;}
+.chat-msg.user .chat-bbl{background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.35);border-radius:14px 14px 3px 14px;padding:0.75rem 1rem;align-self:flex-end;max-width:80%;font-size:0.85rem;}
+.chat-msg.ai .chat-bbl{background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);border-radius:3px 14px 14px 14px;padding:0.75rem 1rem;align-self:flex-start;max-width:85%;font-size:0.85rem;line-height:1.7;}
+.chat-sender{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--dim);margin-bottom:0.3rem;}
+.chat-msg.ai .chat-sender{color:var(--violet);}
+.chat-msg.user .chat-sender{color:var(--blue);text-align:right;}
+.quick-queries{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;}
+.qquery{font-family:'Space Grotesk',sans-serif;font-size:0.8rem;padding:0.5rem 1rem;border:1px solid rgba(124,58,237,0.3);border-radius:20px;cursor:pointer;background:transparent;color:var(--text);transition:all 0.25s;}
+.qquery:hover{border-color:var(--amber);color:var(--amber);background:rgba(245,158,11,0.08);}
+.typing-indicator{display:inline-flex;gap:4px;align-items:center;padding:0.5rem 0.75rem;}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--violet);animation:typingDot 1.2s infinite;}
+.typing-dot:nth-child(2){animation-delay:0.2s;}
+.typing-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes typingDot{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}}
+
+/* Quiz */
+.quiz-wrap{max-width:620px;margin:0 auto;}
+.quiz-q{font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;color:var(--white);margin-bottom:1.25rem;}
+.quiz-qnum{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--amber);margin-bottom:0.5rem;letter-spacing:0.1em;}
+.quiz-options{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.5rem;}
+.quiz-opt{padding:0.85rem 1.25rem;border:1.5px solid rgba(124,58,237,0.2);border-radius:8px;cursor:pointer;font-size:0.88rem;transition:all 0.25s;background:transparent;color:var(--text);text-align:left;}
+.quiz-opt:hover:not([disabled]){border-color:var(--violet);background:rgba(124,58,237,0.1);}
+.quiz-opt.selected{border-color:var(--blue);background:rgba(37,99,235,0.1);}
+.quiz-opt.correct{border-color:#34D399;background:rgba(52,211,153,0.1);color:#34D399;}
+.quiz-opt.incorrect{border-color:#F87171;background:rgba(248,113,113,0.1);color:#F87171;}
+.quiz-submit{font-family:'Syne',sans-serif;font-weight:700;padding:0.85rem 2rem;background:linear-gradient(135deg,var(--violet),var(--blue));color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:0.9rem;transition:all 0.3s;width:100%;}
+.quiz-submit:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,0.5);}
+.quiz-feedback{margin-top:1rem;padding:1rem 1.25rem;border-radius:8px;font-size:0.85rem;line-height:1.7;display:none;}
+.quiz-score{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;text-align:center;margin-bottom:1rem;}
+.confetti-pop{position:fixed;pointer-events:none;z-index:999;}
+
+/* Flashcard */
+.flash-wrap{max-width:500px;margin:0 auto;text-align:center;}
+.flashcard-scene{perspective:1000px;margin-bottom:1.5rem;}
+.flashcard{width:100%;height:200px;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(.175,.885,.32,1.275);cursor:pointer;border-radius:16px;}
+.flashcard.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;backface-visibility:hidden;}
+.card-front{background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(37,99,235,0.1));border:1.5px solid rgba(124,58,237,0.35);}
+.card-back{background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(234,88,12,0.08));border:1.5px solid rgba(245,158,11,0.35);transform:rotateY(180deg);}
+.card-front h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:0.5rem;}
+.card-front p{font-size:0.8rem;color:var(--dim);}
+.card-back h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;color:var(--amber);margin-bottom:0.5rem;}
+.card-back p{font-size:0.85rem;color:var(--text);line-height:1.6;}
+.card-tap-hint{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--dim);margin-bottom:1rem;letter-spacing:0.1em;}
+.flash-ratings{display:flex;gap:0.75rem;justify-content:center;margin-top:1rem;}
+.rating-btn{font-family:'Space Mono',monospace;font-size:0.7rem;padding:0.6rem 1.25rem;border-radius:20px;cursor:pointer;border:1.5px solid;transition:all 0.25s;background:transparent;}
+.rating-btn.easy{border-color:#34D399;color:#34D399;}.rating-btn.easy:hover{background:rgba(52,211,153,0.1);}
+.rating-btn.medium{border-color:var(--amber);color:var(--amber);}.rating-btn.medium:hover{background:rgba(245,158,11,0.1);}
+.rating-btn.hard{border-color:#F87171;color:#F87171;}.rating-btn.hard:hover{background:rgba(248,113,113,0.1);}
+.flash-nav{display:flex;justify-content:center;gap:1rem;margin-top:1rem;}
+.flash-nav-btn{font-family:'Space Mono',monospace;font-size:0.7rem;padding:0.5rem 1rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:transparent;color:var(--text);transition:all 0.25s;}
+.flash-nav-btn:hover{border-color:var(--violet);color:var(--violet);}
+.flash-counter{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--dim);text-align:center;margin-top:0.75rem;}
+
+/* Scheduler */
+.sched-wrap{max-width:600px;margin:0 auto;}
+.sched-progress{background:#080c14;border:1px solid var(--border);border-radius:10px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;}
+.prog-label{font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--dim);white-space:nowrap;}
+.prog-bar-wrap{flex:1;height:8px;background:rgba(124,58,237,0.15);border-radius:4px;overflow:hidden;}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--violet),var(--amber));border-radius:4px;transition:width 0.5s ease;}
+.prog-pct{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--amber);white-space:nowrap;}
+.sched-section{margin-bottom:1.5rem;}
+.sched-section-title{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--white);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;}
+.sched-task{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border:1px solid rgba(124,58,237,0.12);border-radius:8px;margin-bottom:0.5rem;cursor:pointer;transition:all 0.25s;background:transparent;}
+.sched-task:hover{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.05);}
+.sched-task.done{opacity:0.55;}
+.sched-task.done .task-label{text-decoration:line-through;color:var(--dim);}
+.task-check{width:18px;height:18px;border-radius:4px;border:2px solid rgba(124,58,237,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.25s;}
+.sched-task.done .task-check{background:var(--violet);border-color:var(--violet);}
+.task-label{font-size:0.85rem;color:var(--text);}
+.task-badge{margin-left:auto;font-family:'Space Mono',monospace;font-size:0.6rem;padding:0.15rem 0.55rem;border-radius:4px;color:var(--amber);border:1px solid rgba(245,158,11,0.3);}
+
+/* TECH STACK */
+#techstack{background:linear-gradient(180deg,var(--bg) 0%,#0d1122 50%,var(--bg) 100%);}
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:4rem;align-items:start;}
+.arch-layers{display:flex;flex-direction:column;gap:1px;background:var(--border);}
+.arch-layer{padding:1.5rem 1.75rem;background:var(--bg2);transition:all 0.3s;cursor:default;display:flex;gap:1rem;align-items:flex-start;}
+.arch-layer:hover{background:rgba(124,58,237,0.05);padding-left:2.25rem;}
+.arch-layer-ic{font-size:1.5rem;flex-shrink:0;}
+.arch-layer h4{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;color:var(--white);margin-bottom:0.3rem;}
+.arch-layer p{font-size:0.82rem;color:#64748B;line-height:1.65;}
+.arch-layer .lt{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--amber);margin-top:0.3rem;}
+.code-block{background:#050810;border:1px solid rgba(124,58,237,0.2);border-radius:8px;padding:1.5rem;font-family:'Space Mono',monospace;font-size:0.73rem;line-height:1.9;position:relative;overflow:hidden;margin-bottom:1.25rem;}
+.code-block::before{content:'kotlin';position:absolute;top:0.6rem;right:1rem;font-size:0.58rem;color:var(--violet);letter-spacing:0.1em;}
+.kw{color:#C084FC;}.fn{color:#60A5FA;}.str{color:#34D399;}.cm{color:#475569;}.nm{color:var(--amber);}
+.folder-tree{background:#050810;border:1px solid rgba(37,99,235,0.2);border-radius:8px;padding:1.5rem;font-family:'Space Mono',monospace;font-size:0.72rem;line-height:2.1;color:#94A3B8;}
+.folder-tree .dir{color:var(--violet);}.folder-tree .file{color:#94A3B8;}.folder-tree .comment{color:var(--dim);}
+
+/* SDG SECTION */
+#sdg{background:var(--bg2);}
+.sdg-panel{border:1px solid rgba(124,58,237,0.2);border-radius:16px;padding:4rem;background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(37,99,235,0.04));position:relative;overflow:hidden;margin-top:3rem;}
+.sdg-panel::before{content:'4';position:absolute;right:-1rem;top:-2rem;font-family:'Syne',sans-serif;font-size:16rem;font-weight:800;color:rgba(124,58,237,0.06);line-height:1;pointer-events:none;}
+.sdg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-top:2.5rem;}
+.sdg-card{padding:1.75rem;border:1px solid var(--border);border-radius:12px;background:rgba(11,15,25,0.6);transition:all 0.3s;}
+.sdg-card:hover{border-color:rgba(245,158,11,0.4);transform:translateY(-4px);}
+.sdg-icon{font-size:2rem;margin-bottom:0.75rem;}
+.sdg-card h4{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:var(--white);margin-bottom:0.5rem;}
+.sdg-card p{font-size:0.83rem;color:#64748B;line-height:1.65;}
+
+/* DOWNLOAD */
+#download{text-align:center;background:radial-gradient(ellipse 100% 80% at 50% 100%,rgba(124,58,237,0.1) 0%,transparent 70%);}
+.dl-card{display:inline-flex;flex-direction:column;align-items:center;padding:4rem 5rem;border:1px solid var(--border);border-radius:20px;background:rgba(124,58,237,0.04);margin-top:3rem;position:relative;overflow:hidden;max-width:840px;width:100%;}
+.dl-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,0.05),transparent);}
+.dl-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:2rem;position:relative;z-index:1;}
+.dl-btn{display:inline-flex;align-items:center;gap:0.75rem;padding:1rem 2rem;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,0.03);text-decoration:none;transition:all 0.3s;min-width:195px;}
+.dl-btn:hover{border-color:var(--amber);background:rgba(245,158,11,0.08);transform:translateY(-3px);box-shadow:0 12px 30px rgba(245,158,11,0.2);}
+.dl-btn .di{font-size:1.8rem;}
+.dl-btn .dt small{display:block;font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;}
+.dl-btn .dt strong{display:block;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--white);margin-top:0.1rem;}
+.dl-feature-row{display:flex;flex-direction:column;gap:0.5rem;margin-top:1.5rem;text-align:left;width:100%;position:relative;z-index:1;}
+.dl-feat{display:flex;align-items:center;gap:0.6rem;font-family:'Space Mono',monospace;font-size:0.7rem;color:#94A3B8;}
+.dl-feat span.ck{color:#34D399;}
+.env-block{background:#050810;border:1px solid rgba(37,99,235,0.25);border-radius:8px;padding:1.25rem 1.5rem;font-family:'Space Mono',monospace;font-size:0.75rem;line-height:2;margin-top:2rem;text-align:left;width:100%;position:relative;z-index:1;}
+.env-block::before{content:'.env';position:absolute;top:0.5rem;right:1rem;font-size:0.58rem;color:var(--dim);letter-spacing:0.1em;}
+
+/* FOOTER */
+footer{text-align:center;padding:4rem 2rem;border-top:1px solid var(--border);position:relative;z-index:1;}
+.ft-logo{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--white);letter-spacing:0.02em;margin-bottom:0.5rem;}
+.ft-logo span{background:linear-gradient(135deg,var(--violet),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ft-tag{font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--dim);letter-spacing:0.15em;margin-bottom:0.25rem;}
+.ft-links{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0;}
+.ft-links a{font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--dim);text-decoration:none;letter-spacing:0.08em;transition:color 0.3s;}
+.ft-links a:hover{color:var(--amber);}
+.ft-status{display:inline-flex;align-items:center;gap:0.5rem;font-family:'Space Mono',monospace;font-size:0.68rem;color:#34D399;margin-top:0.75rem;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#34D399;box-shadow:0 0 8px #34D399;animation:blink 2s infinite;}
+.ft-social{display:flex;gap:1.25rem;justify-content:center;margin:1rem 0;}
+.ft-social a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--border);border-radius:8px;color:var(--dim);text-decoration:none;font-size:1rem;transition:all 0.3s;}
+.ft-social a:hover{border-color:var(--amber);color:var(--amber);background:rgba(245,158,11,0.08);}
+.ft-copy{font-size:0.78rem;color:var(--dim);margin-top:1rem;}
+
+/* CREATOR SECTION */
+.creator-card{max-width:480px;margin:3rem auto 0;padding:2.5rem;border:1px solid rgba(245,158,11,0.2);border-radius:16px;background:rgba(245,158,11,0.03);text-align:center;}
+.creator-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--amber));margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:2px solid rgba(245,158,11,0.4);box-shadow:0 0 20px rgba(245,158,11,0.2);}
+.creator-name{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--white);margin-bottom:0.25rem;}
+.creator-role{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--amber);letter-spacing:0.15em;text-transform:uppercase;}
+.creator-bio{font-size:0.85rem;color:#64748B;margin-top:0.75rem;line-height:1.65;}
+.creator-link{display:inline-flex;align-items:center;gap:0.4rem;margin-top:1rem;font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--dim);text-decoration:none;border:1px solid rgba(124,58,237,0.3);padding:0.35rem 0.9rem;border-radius:6px;transition:all 0.3s;}
+.creator-link:hover{color:var(--violet);border-color:rgba(124,58,237,0.7);background:rgba(124,58,237,0.08);}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem;}.nav-links{display:none;}
+  .hero-row{flex-direction:column;gap:3rem;}
+  .arch-grid{grid-template-columns:1fr;}
+  .stat-item{min-width:130px;padding:1.5rem;}
+  .stat-num{font-size:1.8rem;}
+  .dl-card{padding:2rem 1.5rem;}
+  .sdg-panel{padding:2rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="particle-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="logo-icon">
+      <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="19" cy="13" r="8" stroke="#F59E0B" stroke-width="1.8"/>
+        <path d="M12 13 Q19 6 26 13" stroke="#7C3AED" stroke-width="1.5" fill="none"/>
+        <rect x="10" y="25" width="18" height="10" rx="3" fill="none" stroke="#F59E0B" stroke-width="1.5"/>
+        <line x1="19" y1="21" x2="19" y2="25" stroke="#F59E0B" stroke-width="1.5"/>
+        <circle cx="19" cy="13" r="2.5" fill="#F59E0B"/>
+        <circle cx="19" cy="19" r="16" stroke="#7C3AED" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.5"/>
+      </svg>
+    </div>
+    <span>Karan<em>EDU</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#playground">Demo</a></li>
+    <li><a href="#techstack">Tech Stack</a></li>
+    <li><a href="#sdg">SDG 4</a></li>
+    <li><a href="#download">Download</a></li>
+  </ul>
+  <a class="nav-cta" href="#download">Download App</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-row">
+    <div class="hero-left">
+      <div class="hero-badge">Offline-First · AI Powered · SDG 4</div>
+      <h1 class="hero-title">Personalized<br/>AI Tutoring.</h1>
+      <h1 class="hero-title"><span class="grad">Offline-First.<br/>Accessible.</span></h1>
+      <p class="hero-sub-label">Bridging the global education gap — one student at a time</p>
+      <p class="hero-desc">KaranEDU combines the power of Google Gemini AI with local Room DB caching, bringing premium diagnostic learning to any device — even when completely offline. Free. For everyone.</p>
+      <div class="hero-btns">
+        <a class="btn-p" href="https://github.com/karan942006/KaranEDU/releases/download/KaranEDU/app-debug.apk" download="KaranEDU.apk">⬇ Download Android APK</a>
+        <a class="btn-s" href="#playground">Try Interactive Demo</a>
+      </div>
+      <div class="terminal reveal">
+        <div class="terminal-header">// KaranEDU AI Engine v1.0</div>
+        <div class="t-cm">// Initializing offline-first learning core</div>
+        <div class="t-cmd">$ init --engine gemini --cache room-sqlite</div>
+        <div class="t-out">✓ Google Gemini SDK connected</div>
+        <div class="t-cmd">$ sync --mode offline-first --db local</div>
+        <div class="t-out">✓ Room DB initialized · 100% offline ready</div>
+        <div class="t-warn">→ Firebase sync will resume on connectivity</div>
+        <div class="t-out">✓ AI Tutor · Quiz · Flashcards · Planner armed</div>
+        <div class="t-cmd t-cur">$ _</div>
+      </div>
+    </div>
+    <div>
+      <div class="phone-scene">
+        <div class="ph-body">
+          <div class="ph-scr">
+            <div class="ph-notch"></div>
+            <div class="ph-status"><span>KaranEDU</span><span>🤖 AI Ready</span></div>
+            <div class="ph-app-label">Welcome back, Student!</div>
+            <div class="ph-buttons">
+              <div class="ph-btn chat">💬 Chat<br/>Tutor</div>
+              <div class="ph-btn quiz">📝 AI<br/>Quiz</div>
+              <div class="ph-btn flash">🃏 Flash-<br/>cards</div>
+              <div class="ph-btn plan">📅 Study<br/>Planner</div>
+            </div>
+            <div class="ph-chat-area">
+              <div class="ph-msg r"><div class="ph-bbl"><span>Explain Newton's 3rd Law</span><div class="ph-tag">AI Tutor Query</div></div></div>
+              <div class="ph-msg s"><div class="ph-bbl"><span>Every action has an equal &amp; opposite reaction. E.g. rocket propulsion ✨</span><div class="ph-tag">Gemini AI · Cached offline</div></div></div>
+            </div>
+            <div class="ph-bar"><span>🛡</span><span>Offline Mode Active · Room DB Cache</span></div>
+            <div style="padding:8px 14px;display:flex;gap:6px;">
+              <div style="flex:1;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:16px;padding:6px 10px;"><span style="font-family:'Space Mono',monospace;font-size:7px;color:rgba(255,255,255,0.3);">Ask anything...</span></div>
+              <div style="width:26px;height:26px;background:linear-gradient(135deg,var(--violet),var(--amber));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;">▶</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>Explore Below</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- STATS -->
+<div class="container">
+  <div class="stats-bar reveal">
+    <div class="stat-item"><span class="stat-num" data-count="4">0</span><div class="stat-lbl">Core AI Features</div></div>
+    <div class="stat-item"><span class="stat-num">100%</span><div class="stat-lbl">Offline Capable</div></div>
+    <div class="stat-item"><span class="stat-num">0</span><div class="stat-lbl">Cost to Students</div></div>
+    <div class="stat-item"><span class="stat-num" data-count="193">0</span><div class="stat-lbl">UN Member States</div></div>
+    <div class="stat-item"><span class="stat-num">SDG 4</span><div class="stat-lbl">UN Goal Aligned</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-label">Core Capabilities</div>
+      <h2 class="sec-title">Everything a Student<br/><span class="hl">Needs to Excel</span></h2>
+      <p class="sec-desc">Five intelligent modules working together — powered by Gemini AI, cached offline by Room SQLite, and synced securely to Firebase when connectivity returns.</p>
+    </div>
+    <div class="feat-grid reveal" style="margin-top:3rem;">
+      <div class="feat-card">
+        <span class="feat-icon">✨</span>
+        <h3>Personal AI Tutor (Gemini Powered)</h3>
+        <p>Real-time conversational answers to any academic question. Grade-level aligned responses, concept breakdowns, mnemonics, and detailed explanations — all powered by Google Gemini AI and cached locally for offline access.</p>
+        <span class="feat-tag">Google Gemini · Room Cache</span>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🛡</span>
+        <h3>AI Diagnostic Quizzes</h3>
+        <p>Automatically generated assessments tailored to your subject and grade. Instant performance breakdown, detailed explanations per question, and diagnostic scorecards to identify exactly where to improve.</p>
+        <span class="feat-tag">Auto-Generated · Instant Feedback</span>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🃏</span>
+        <h3>Spaced-Repetition Flashcards</h3>
+        <p>AI creates bite-sized flashcards from any topic. Interactive 3D flip cards for active recall, with Easy/Medium/Hard self-rating to optimize your spaced-repetition schedule automatically.</p>
+        <span class="feat-tag">Active Recall · AI Generated</span>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">📅</span>
+        <h3>Smart Daily Study Planner</h3>
+        <p>Custom tracks for Mathematics, Physics, Essay prep and more. Interactive task checklists that persist locally — your study progress survives app restarts, offline sessions, and device changes.</p>
+        <span class="feat-tag">Local Persistence · Custom Tracks</span>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">☁</span>
+        <h3>SQLite Cache & Cloud Sync</h3>
+        <p>Local Room database stores all quiz results, chat history, flashcards, and planner data indefinitely offline. When connectivity returns, Firebase Firestore seamlessly syncs everything across devices.</p>
+        <span class="feat-tag">Room DB · Firebase Sync</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE PLAYGROUND -->
+<section id="playground">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-label">Interactive Demo</div>
+      <h2 class="sec-title">Try KaranEDU<br/><span class="hl">Right Now</span></h2>
+      <p class="sec-desc">Experience the core features of the KaranEDU app directly in your browser. No download required for the demo.</p>
+    </div>
+    <div class="playground-wrap reveal">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('chat',this)">💬 Chat Tutor</button>
+        <button class="tab-btn" onclick="switchTab('quiz',this)">📝 Diagnostic Quiz</button>
+        <button class="tab-btn" onclick="switchTab('flash',this)">🃏 Flashcards</button>
+        <button class="tab-btn" onclick="switchTab('sched',this)">📅 Study Planner</button>
+      </div>
+
+      <!-- CHAT TAB -->
+      <div class="tab-content active" id="tab-chat">
+        <div class="chat-wrap">
+          <p style="font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--dim);margin-bottom:1rem;letter-spacing:0.08em;">CLICK A QUERY BELOW TO SEE THE AI TUTOR IN ACTION</p>
+          <div class="quick-queries">
+            <button class="qquery" onclick="sendChatQuery('Explain Quantum Physics simply')">Explain Quantum Physics simply</button>
+            <button class="qquery" onclick="sendChatQuery('Mnemonic for the Krebs Cycle')">Mnemonic for Krebs Cycle</button>
+            <button class="qquery" onclick="sendChatQuery('What is Newton\'s Second Law?')">Newton's Second Law</button>
+            <button class="qquery" onclick="sendChatQuery('Explain photosynthesis step by step')">Photosynthesis steps</button>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-msg ai">
+              <div class="chat-sender">🤖 KaranEDU AI Tutor</div>
+              <div class="chat-bbl">Hello! I'm your personal AI tutor powered by Gemini. Click any question above or type your own — I'm here to explain any concept, from basic arithmetic to quantum physics!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ TAB -->
+      <div class="tab-content" id="tab-quiz">
+        <div class="quiz-wrap" id="quiz-container">
+          <div id="quiz-q1">
+            <div class="quiz-qnum">QUESTION 1 OF 3 · BIOLOGY</div>
+            <div class="quiz-q">What is the primary function of Mitochondria in a cell?</div>
+            <div class="quiz-options" id="opts-1">
+              <button class="quiz-opt" onclick="selectOpt(1,'A')">A. Protein synthesis via ribosomes</button>
+              <button class="quiz-opt" onclick="selectOpt(1,'B')">B. Produces ATP via aerobic cellular respiration</button>
+              <button class="quiz-opt" onclick="selectOpt(1,'C')">C. Controls cell division and DNA replication</button>
+            </div>
+          </div>
+          <div id="quiz-q2">
+            <div class="quiz-qnum">QUESTION 2 OF 3 · PHYSICS</div>
+            <div class="quiz-q">Which law states that Force = Mass × Acceleration?</div>
+            <div class="quiz-options" id="opts-2">
+              <button class="quiz-opt" onclick="selectOpt(2,'A')">A. Newton's First Law of Motion</button>
+              <button class="quiz-opt" onclick="selectOpt(2,'B')">B. Newton's Third Law of Motion</button>
+              <button class="quiz-opt" onclick="selectOpt(2,'C')">C. Newton's Second Law of Motion</button>
+            </div>
+          </div>
+          <div id="quiz-q3">
+            <div class="quiz-qnum">QUESTION 3 OF 3 · CHEMISTRY</div>
+            <div class="quiz-q">What is the chemical symbol for Gold?</div>
+            <div class="quiz-options" id="opts-3">
+              <button class="quiz-opt" onclick="selectOpt(3,'A')">A. Go</button>
+              <button class="quiz-opt" onclick="selectOpt(3,'B')">B. Gd</button>
+              <button class="quiz-opt" onclick="selectOpt(3,'C')">C. Au</button>
+            </div>
+          </div>
+          <button class="quiz-submit" onclick="submitQuiz()">Submit Answers & See Results</button>
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <!-- FLASHCARD TAB -->
+      <div class="tab-content" id="tab-flash">
+        <div class="flash-wrap">
+          <p class="card-tap-hint">// TAP THE CARD TO FLIP AND REVEAL THE ANSWER</p>
+          <div class="flashcard-scene">
+            <div class="flashcard" id="flashcard" onclick="flipCard()">
+              <div class="card-face card-front">
+                <h3 id="flash-q">What is the primary function of Mitochondria?</h3>
+                <p>Tap to reveal answer ↓</p>
+              </div>
+              <div class="card-face card-back">
+                <h3>Answer:</h3>
+                <p id="flash-a">Produces ATP (energy) via aerobic cellular respiration. Often called the "powerhouse of the cell."</p>
+              </div>
+            </div>
+          </div>
+          <div class="flash-ratings">
+            <button class="rating-btn easy" onclick="rateCard('easy')">😊 Easy</button>
+            <button class="rating-btn medium" onclick="rateCard('medium')">🤔 Medium</button>
+            <button class="rating-btn hard" onclick="rateCard('hard')">😅 Hard</button>
+          </div>
+          <div class="flash-nav">
+            <button class="flash-nav-btn" onclick="prevCard()">← Previous</button>
+            <button class="flash-nav-btn" onclick="nextCard()">Next →</button>
+          </div>
+          <div class="flash-counter" id="flash-counter">Card 1 of 4</div>
+        </div>
+      </div>
+
+      <!-- SCHEDULER TAB -->
+      <div class="tab-content" id="tab-sched">
+        <div class="sched-wrap">
+          <div class="sched-progress">
+            <span class="prog-label">TODAY'S PROGRESS</span>
+            <div class="prog-bar-wrap"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+            <span class="prog-pct" id="prog-pct">0%</span>
+          </div>
+          <div class="sched-section">
+            <div class="sched-section-title">⚛ Physics</div>
+            <div class="sched-task" onclick="toggleTask(this)" data-done="false"><div class="task-check">✓</div><span class="task-label">Read Chapter 3: Thermodynamics</span><span class="task-badge">45 min</span></div>
+            <div class="sched-task" onclick="toggleTask(this)" data-done="false"><div class="task-check">✓</div><span class="task-label">Practice 10 Newton's Law problems</span><span class="task-badge">30 min</span></div>
+            <div class="sched-task" onclick="toggleTask(this)" data-done="false"><div class="task-check">✓</div><span class="task-label">Watch wave optics explainer video</span><span class="task-badge">20 min</span></div>
+          </div>
+          <div class="sched-section">
+            <div class="sched-section-title">📐 Mathematics</div>
+            <div class="sched-task" onclick="toggleTask(this)" data-done="false"><div class="task-check">✓</div><span class="task-label">Complete Calculus Diagnostic Drill</span><span class="task-badge">40 min</span></div>
+            <div class="sched-task" onclick="toggleTask(this)" data-done="false"><div class="task-check">✓</div><span class="task-label">Revise Integration by Parts formulas</span><span class="task-badge">25 min</span></div>
+          </div>
+          <div class="sched-section">
+            <div class="sched-section-title">✍ Essay Writing</div>
+            <div class="sched-task" onclick="toggleTask(this)" data-done="false"><div class="task-check">✓</div><span class="task-label">Draft argumentative essay outline</span><span class="task-badge">35 min</span></div>
+            <div class="sched-task" onclick="toggleTask(this)" data-done="false"><div class="task-check">✓</div><span class="task-label">Review 5 sample thesis statements</span><span class="task-badge">15 min</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="techstack">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-label">Architecture & Tech Stack</div>
+      <h2 class="sec-title">Built on Modern<br/><span class="hl">Android Standards</span></h2>
+      <p class="sec-desc">MVVM architecture with clean separation of concerns — from Jetpack Compose UI down to Room SQLite and Firebase Firestore.</p>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-layers reveal">
+        <div class="arch-layer"><div class="arch-layer-ic">🎨</div><div><h4>Kotlin & Jetpack Compose (M3)</h4><p>Fully declarative UI with Material Design 3 layouts. Edge-to-edge support, adaptive screen sizing, and rich light/dark theming across all Android OEM skins.</p><div class="lt">com.karanedu.app.ui.screens</div></div></div>
+        <div class="arch-layer"><div class="arch-layer-ic">🧠</div><div><h4>KaranEDU ViewModel (MVVM)</h4><p>Lifecycle-aware state management using Kotlin Coroutines and StateFlow. Single source of truth for AI responses, quiz state, flashcard progress, and planner data.</p><div class="lt">StateFlow · Coroutines · lifecycle-aware</div></div></div>
+        <div class="arch-layer"><div class="arch-layer-ic">🗄</div><div><h4>Room SQLite — Offline-First Cache</h4><p>All chat history, quiz scores, flashcards, and study plans stored in Room DB. The app works fully without internet — offline is the primary mode, not a fallback.</p><div class="lt">com.karanedu.app.data.database</div></div></div>
+        <div class="arch-layer"><div class="arch-layer-ic">🤖</div><div><h4>Google Gemini SDK Integration</h4><p>Async API calls via Kotlin Coroutines for chat tutoring, quiz generation, and flashcard creation. Responses cached locally for instant offline replay.</p><div class="lt">Gemini AI · Coroutines · async</div></div></div>
+        <div class="arch-layer"><div class="arch-layer-ic">🔥</div><div><h4>Firebase Auth & Cloud Firestore</h4><p>Gmail-based onboarding with secure OAuth. Firestore backup and restore syncs all student progress, quiz history, and study plans across multiple devices seamlessly.</p><div class="lt">Firebase Auth · Firestore · Cloud Sync</div></div></div>
+      </div>
+      <div class="reveal" style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="code-block"><span class="cm">// KaranEDUViewModel.kt — Gemini AI Call</span>
+<span class="kw">fun</span> <span class="fn">askTutor</span>(query: String) {
+  viewModelScope.launch {
+    <span class="fn">_uiState</span>.value = UiState.Loading
+    <span class="kw">val</span> result = geminiRepo
+      .<span class="fn">generateResponse</span>(query)
+    <span class="cm">// Cache to Room DB for offline</span>
+    localDb.<span class="fn">chatDao</span>().<span class="fn">insert</span>(
+      ChatMessage(query, result)
+    )
+    <span class="fn">_uiState</span>.value = UiState.Success(result)
+  }
+}</div>
+        <div class="code-block"><span class="cm">// Database.kt — Room Entity</span>
+<span class="kw">@Entity</span>(tableName = <span class="str">"quiz_results"</span>)
+<span class="kw">data class</span> <span class="fn">QuizResult</span>(
+  <span class="kw">@PrimaryKey</span> <span class="kw">val</span> id: String,
+  <span class="kw">val</span> subject: String,
+  <span class="kw">val</span> score: Int,
+  <span class="kw">val</span> totalQuestions: Int,
+  <span class="kw">val</span> timestamp: Long
+)
+<span class="cm">// Synced to Firestore on connectivity</span></div>
+        <div class="folder-tree"><span class="dir">├── app/src/main/java/com/karanedu/</span>
+<span class="dir">│   ├── data/</span>
+<span class="file">│   │   ├── Database.kt</span>        <span class="comment"># Room entities & DAOs</span>
+<span class="file">│   │   └── FirebaseService.kt</span> <span class="comment"># Auth & Firestore sync</span>
+<span class="dir">│   └── ui/</span>
+<span class="dir">│       ├── theme/</span>             <span class="comment"># M3 Colors, Styles</span>
+<span class="dir">│       ├── screens/</span>           <span class="comment"># Chat, Quiz, Planner</span>
+<span class="file">│       └── KaranEDUViewModel.kt</span>
+<span class="file">├── .env</span>                       <span class="comment"># GEMINI_API_KEY here</span>
+<span class="file">└── google-services.json</span>       <span class="comment"># Firebase config</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SDG SECTION -->
+<section id="sdg">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-label">UN SDG Goal 4</div>
+      <h2 class="sec-title">Quality Education<br/><span class="hl">For Everyone</span></h2>
+      <p class="sec-desc">KaranEDU was built with a mission: remove every barrier between a student and world-class education — starting with internet access.</p>
+    </div>
+    <div class="sdg-panel reveal">
+      <p style="font-size:1.1rem;line-height:1.9;color:#94A3B8;max-width:720px;">The United Nations' Sustainable Development Goal 4 calls for inclusive, equitable quality education for all by 2030. Over <strong style="color:var(--white);">2.9 billion people</strong> still lack reliable internet access. KaranEDU's offline-first architecture means premium AI tutoring works on <strong style="color:var(--amber);">any device, anywhere</strong> — from metro cities to rural villages — at zero cost.</p>
+      <div class="sdg-grid">
+        <div class="sdg-card">
+          <div class="sdg-icon">🌐</div>
+          <h4>Zero Internet Barrier</h4>
+          <p>Full AI tutoring, quizzes, and flashcards work completely offline via Room SQLite caching. No connectivity required after initial setup.</p>
+        </div>
+        <div class="sdg-card">
+          <div class="sdg-icon">💰</div>
+          <h4>Completely Free</h4>
+          <p>No subscriptions, no paywalls, no ads. Every feature is free forever — because quality education should not have a price tag.</p>
+        </div>
+        <div class="sdg-card">
+          <div class="sdg-icon">🎯</div>
+          <h4>Personalized Learning</h4>
+          <p>AI tutoring adapts to each student's grade level and learning pace — the kind of personalized attention once reserved for expensive private tutors.</p>
+        </div>
+        <div class="sdg-card">
+          <div class="sdg-icon">📊</div>
+          <h4>Diagnostic Progress</h4>
+          <p>Detailed quiz analytics and study tracking help students identify weak areas and focus their effort where it matters most.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section id="download">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="sec-label" style="justify-content:center;">Get The App</div>
+      <h2 class="sec-title">Download<br/><span class="hl">KaranEDU</span></h2>
+      <p class="sec-desc" style="margin:0 auto;">Offline-first AI learning for Android. Free, open-source, and built for every student on the planet.</p>
+    </div>
+    <div style="display:flex;justify-content:center;" class="reveal">
+      <div class="dl-card">
+        <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--white);position:relative;z-index:1;margin-bottom:0.5rem;">Karan<span style="background:linear-gradient(135deg,var(--violet),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">EDU</span></div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--dim);letter-spacing:0.15em;position:relative;z-index:1;margin-bottom:2rem;">v1.0.0 · Android 8.0+ · AI-Powered · Offline-First</div>
+
+        <div class="dl-feature-row">
+          <div class="dl-feat"><span class="ck">✓</span> Google Gemini AI — Chat Tutor, Quiz Generator, Flashcard Creator</div>
+          <div class="dl-feat"><span class="ck">✓</span> 100% Offline capable via Room SQLite database caching</div>
+          <div class="dl-feat"><span class="ck">✓</span> Firebase Auth & Firestore cloud sync when online</div>
+          <div class="dl-feat"><span class="ck">✓</span> Smart Study Planner with local checklist persistence</div>
+          <div class="dl-feat"><span class="ck">✓</span> Free forever · No ads · No tracking</div>
+        </div>
+
+        <div class="dl-btns">
+          <a class="dl-btn" href="https://github.com/karan942006/KaranEDU/releases/download/KaranEDU/app-debug.apk" download="KaranEDU.apk" style="border-color:var(--amber);background:rgba(245,158,11,0.08);flex:1;min-width:200px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);"></div>
+            <span class="di">⬇</span>
+            <div class="dt"><small style="color:var(--amber);">Direct Download</small><strong>Download APK</strong></div>
+          </a>
+          <a class="dl-btn" href="https://github.com/karan942006/KaranEDU" target="_blank" rel="noopener" style="flex:1;min-width:200px;">
+            <span class="di"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="color:#CBD5E1;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
+            <div class="dt"><small>Source Code</small><strong>View on GitHub</strong></div>
+          </a>
+          <a class="dl-btn" href="https://github.com/karan942006/KaranEDU/archive/refs/heads/main.zip" style="flex:1;min-width:200px;">
+            <span class="di">📦</span>
+            <div class="dt"><small>Source Project</small><strong>Download ZIP</strong></div>
+          </a>
+        </div>
+
+        <div class="env-block">
+          <div style="color:var(--dim);"># Quick Setup — Configure your Gemini API Key</div>
+          <div style="color:var(--violet);">$ git clone https://github.com/karan942006/KaranEDU.git</div>
+          <div style="color:var(--dim);"># Create .env file in project root:</div>
+          <div><span style="color:#34D399;">GEMINI_API_KEY</span>=<span style="color:var(--amber);">YOUR_GEMINI_API_KEY_HERE</span></div>
+          <div style="color:var(--dim);"># For Firebase (optional): add google-services.json to /app</div>
+          <div style="color:var(--violet);"># Then open in Android Studio and click Run ▶</div>
+        </div>
+
+        <div style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-top:1.5rem;position:relative;z-index:1;">
+          <span style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#34D399;">✓ Android 8.0+</span>
+          <span style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#34D399;">✓ Kotlin · Jetpack Compose</span>
+          <span style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#34D399;">✓ No Ads · Free Forever</span>
+          <span style="font-family:'Space Mono',monospace;font-size:0.65rem;color:#34D399;">✓ Open Source</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-logo">Karan<span>EDU</span></div>
+  <div class="ft-tag">AI-Powered · Offline-First · SDG 4 Aligned</div>
+
+  <div class="creator-card">
+    <div class="creator-avatar">👨‍💻</div>
+    <div class="creator-name">Karan Lingayat</div>
+    <div class="creator-role">Creator & Lead Developer</div>
+    <div class="creator-bio">Android developer building offline-first AI educational tools. Believer in accessible, free education for every student worldwide.</div>
+    <a class="creator-link" href="https://www.linkedin.com/in/karan-lingayat-066420330/" target="_blank" rel="noopener">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn Profile
+    </a>
+  </div>
+
+  <div class="ft-links">
+    <a href="#features">Features</a>
+    <a href="#playground">Demo</a>
+    <a href="#techstack">Tech Stack</a>
+    <a href="#sdg">SDG 4</a>
+    <a href="#download">Download</a>
+    <a href="https://github.com/karan942006/KaranEDU" target="_blank">GitHub</a>
+  </div>
+  <div class="ft-social">
+    <a href="https://github.com/karan942006/KaranEDU" target="_blank" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/karan-lingayat-066420330/" target="_blank" title="LinkedIn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a href="https://twitter.com/" target="_blank" title="Twitter / X">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+  </div>
+  <div class="ft-status"><span class="status-dot"></span>System Online · AI Engine Active</div>
+  <div class="ft-copy" style="margin-top:1rem;">© 2026 KaranEDU · Created by Karan Lingayat · Made with ❤️ for quality education worldwide · SDG 4</div>
+</footer>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button,.feat-card,.sdg-card,.dl-btn,.arch-layer,.creator-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.transform='translate(-50%,-50%) scale(1.8)';ring.style.opacity='0.9';ring.style.borderColor='var(--amber)';});
+  el.addEventListener('mouseleave',()=>{ring.style.transform='translate(-50%,-50%) scale(1)';ring.style.opacity='0.6';ring.style.borderColor='var(--violet)';});
+});
+
+// PARTICLES
+const cv=document.getElementById('particle-canvas'),cx=cv.getContext('2d');
+let W,H;function rsz(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}rsz();window.addEventListener('resize',rsz);
+class P{constructor(){this.reset();}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.s=Math.random()*1.4+0.3;this.vx=(Math.random()-0.5)*0.35;this.vy=(Math.random()-0.5)*0.35;this.o=Math.random()*0.35+0.05;this.t=Math.random()>0.6?'v':'b';}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W||this.y<0||this.y>H)this.reset();}draw(){cx.beginPath();cx.arc(this.x,this.y,this.s,0,Math.PI*2);cx.fillStyle=this.t==='v'?`rgba(124,58,237,${this.o})`:`rgba(245,158,11,${this.o*0.6})`;cx.fill();}}
+const pts=[];for(let i=0;i<100;i++)pts.push(new P());
+function loop(){cx.clearRect(0,0,W,H);for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);if(d<110){cx.beginPath();cx.strokeStyle=`rgba(124,58,237,${0.07*(1-d/110)})`;cx.lineWidth=0.5;cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.stroke();}}pts.forEach(p=>{p.update();p.draw();});requestAnimationFrame(loop);}loop();
+
+// REVEAL
+const obs=new IntersectionObserver(e=>e.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// COUNT-UP
+function countUp(el,t,d=1400){let s=0,step=t/d*16;const ti=setInterval(()=>{s+=step;if(s>=t){el.textContent=t.toLocaleString();clearInterval(ti);}else el.textContent=Math.floor(s).toLocaleString();},16);}
+const sobs=new IntersectionObserver(e=>e.forEach(e=>{if(e.isIntersecting){const n=e.target.dataset.count;if(n)countUp(e.target,parseInt(n));sobs.unobserve(e.target);}}),{threshold:0.5});
+document.querySelectorAll('[data-count]').forEach(el=>sobs.observe(el));
+
+// TABS
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// CHAT SIMULATOR
+const chatResponses={
+  'Explain Quantum Physics simply':'Quantum Physics describes the behavior of matter and energy at the smallest scales — atoms and subatomic particles. 🔬\n\nKey concepts:\n• Wave-Particle Duality: particles like electrons behave as both waves AND particles depending on how we observe them\n• Superposition: a particle can exist in multiple states simultaneously until measured\n• Entanglement: two particles can be linked so measuring one instantly affects the other — regardless of distance\n\nFun analogy: imagine a coin spinning in the air — it\'s both "heads" and "tails" at the same time. The moment it lands (you observe it), it "collapses" to one state. That\'s quantum superposition! ✨',
+  'Mnemonic for the Krebs Cycle':'Great question! Here\'s a memorable mnemonic for the Krebs Cycle steps: 🧬\n\n🎯 "Citric Acid Is Kept Safe, So Fabulous Metabolites Occur"\n\n• Citrate → Isocitrate → α-Ketoglutarate → Succinyl-CoA → Succinate → Fumarate → Malate → Oxaloacetate\n\nRemember: The cycle starts and ends with Oxaloacetate, accepting Acetyl-CoA (2 carbons from food) each turn.\n\nPer turn: 3 NADH, 1 FADH₂, 1 GTP produced — powering the electron transport chain! ⚡',
+  "What is Newton's Second Law?":'Newton\'s Second Law of Motion states: Force = Mass × Acceleration (F = ma) ⚛\n\nBreaking it down:\n• If you push the same object harder (↑ Force), it accelerates faster\n• If you push two objects with the same force, the lighter one (↓ Mass) accelerates more\n\n📌 Real examples:\n• Kicking a football vs. a bowling ball with the same kick — the football flies further (less mass)\n• A rocket engine applies huge force to overcome the massive mass of the rocket\n\nUnits: Force in Newtons (N), Mass in kg, Acceleration in m/s². One Newton = the force needed to accelerate 1kg at 1 m/s². 🚀',
+  'Explain photosynthesis step by step':'Photosynthesis is how plants convert sunlight into food! 🌱 It happens in two stages:\n\n☀️ LIGHT-DEPENDENT REACTIONS (in Thylakoids)\n1. Chlorophyll absorbs sunlight (mainly red & blue wavelengths)\n2. Water (H₂O) is split → releases O₂ (the oxygen we breathe!)\n3. Light energy converts ADP → ATP and NADP⁺ → NADPH (energy carriers)\n\n🌿 LIGHT-INDEPENDENT REACTIONS — Calvin Cycle (in Stroma)\n1. CO₂ from air is "fixed" using ATP and NADPH\n2. Through 3 turns of the cycle, Glucose (C₆H₁₂O₆) is produced\n3. ADP and NADP⁺ are recycled back to the light reactions\n\nSummary equation:\n6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂ ✨'
+};
+function sendChatQuery(q){
+  const box=document.getElementById('chat-messages');
+  box.innerHTML+=`<div class="chat-msg user"><div class="chat-sender">You</div><div class="chat-bbl">${q}</div></div>`;
+  box.innerHTML+=`<div class="chat-msg ai" id="typing-msg"><div class="chat-sender">🤖 KaranEDU AI Tutor</div><div class="chat-bbl"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>`;
+  box.scrollTop=box.scrollHeight;
+  setTimeout(()=>{
+    const typingMsg=document.getElementById('typing-msg');
+    if(typingMsg){
+      const resp=chatResponses[q]||'Great question! This topic involves several key principles. Let me break it down for you in a clear, step-by-step way...';
+      typingMsg.querySelector('.chat-bbl').innerHTML=resp.replace(/\n/g,'<br>');
+    }
+    box.scrollTop=box.scrollHeight;
+  },1500);
+}
+
+// QUIZ
+const answers={1:'B',2:'C',3:'C'};const selected={};
+function selectOpt(q,opt){
+  document.querySelectorAll(`#opts-${q} .quiz-opt`).forEach(b=>b.classList.remove('selected'));
+  const btns=document.querySelectorAll(`#opts-${q} .quiz-opt`);
+  btns.forEach(b=>{if(b.textContent.startsWith(opt+'.'))b.classList.add('selected');});
+  selected[q]=opt;
+}
+function submitQuiz(){
+  let score=0;
+  [1,2,3].forEach(q=>{
+    const btns=document.querySelectorAll(`#opts-${q} .quiz-opt`);
+    btns.forEach(b=>{b.disabled=true;});
+    btns.forEach(b=>{
+      const isCorrect=b.textContent.startsWith(answers[q]+'.');
+      const isSelected=selected[q]&&b.textContent.startsWith(selected[q]+'.');
+      if(isCorrect){b.classList.add('correct');}
+      else if(isSelected&&!isCorrect){b.classList.add('incorrect');}
+    });
+    if(selected[q]===answers[q])score++;
+  });
+  const fb=document.getElementById('quiz-feedback');
+  const color=score===3?'#34D399':score===2?'var(--amber)':'#F87171';
+  fb.style.display='block';
+  fb.style.border=`1px solid ${color}`;
+  fb.style.background=`rgba(${score===3?'52,211,153':score===2?'245,158,11':'248,113,113'},0.08)`;
+  fb.innerHTML=`<div class="quiz-score" style="color:${color}">${score}/3 Correct ${score===3?'🎉':score>=2?'👍':'📚'}</div>
+  <strong style="color:${color}">${score===3?'Perfect Score! Excellent work!':score===2?'Good effort! Review Q'+(selected[1]!==answers[1]?1:selected[2]!==answers[2]?2:3):' Keep studying — you\'ll get there!'}</strong><br><br>
+  <strong>Q1 Answer (B):</strong> Mitochondria produce ATP through aerobic cellular respiration — they are the "powerhouse of the cell."<br>
+  <strong>Q2 Answer (C):</strong> F = ma is Newton's Second Law of Motion, relating Force, Mass, and Acceleration.<br>
+  <strong>Q3 Answer (C):</strong> The chemical symbol for Gold is Au (from Latin: Aurum).`;
+  if(score===3){spawnConfetti();}
+}
+function spawnConfetti(){
+  const colors=['#7C3AED','#F59E0B','#34D399','#2563EB','#EA580C'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');
+    el.style.cssText=`position:fixed;width:8px;height:8px;border-radius:50%;background:${colors[i%5]};left:${Math.random()*100}vw;top:-10px;z-index:9999;pointer-events:none;`;
+    document.body.appendChild(el);
+    const dur=1000+Math.random()*1500;
+    el.animate([{transform:`translateY(0) rotate(0)`,opacity:1},{transform:`translateY(${60+Math.random()*40}vh) rotate(${Math.random()*720}deg)`,opacity:0}],{duration:dur,easing:'cubic-bezier(.25,.46,.45,.94)'}).onfinish=()=>el.remove();
+  }
+}
+
+// FLASHCARDS
+const cards=[
+  {q:'What is the primary function of Mitochondria?',a:'Produces ATP (energy) via aerobic cellular respiration. Often called the "powerhouse of the cell."'},
+  {q:'What does DNA stand for?',a:'Deoxyribonucleic Acid — the molecule carrying genetic instructions for development and functioning of all living organisms.'},
+  {q:'State Newton\'s First Law of Motion.',a:'An object at rest stays at rest, and an object in motion stays in motion at constant velocity, unless acted upon by an external force.'},
+  {q:'What is the speed of light in a vacuum?',a:'Approximately 299,792,458 meters per second (≈3×10⁸ m/s), denoted by the constant c.'},
+];
+let currentCard=0,isFlipped=false;
+function updateCard(){
+  const fc=document.getElementById('flashcard');
+  fc.classList.remove('flipped');isFlipped=false;
+  setTimeout(()=>{document.getElementById('flash-q').textContent=cards[currentCard].q;document.getElementById('flash-a').textContent=cards[currentCard].a;},300);
+  document.getElementById('flash-counter').textContent=`Card ${currentCard+1} of ${cards.length}`;
+}
+function flipCard(){const fc=document.getElementById('flashcard');isFlipped=!isFlipped;fc.classList.toggle('flipped');}
+function nextCard(){currentCard=(currentCard+1)%cards.length;updateCard();}
+function prevCard(){currentCard=(currentCard-1+cards.length)%cards.length;updateCard();}
+function rateCard(r){const btn=event.target;btn.style.transform='scale(1.2)';setTimeout(()=>{btn.style.transform='scale(1)';nextCard();},300);}
+
+// SCHEDULER
+function toggleTask(el){
+  const done=el.dataset.done==='true';
+  el.dataset.done=String(!done);
+  el.classList.toggle('done',!done);
+  updateProgress();
+}
+function updateProgress(){
+  const tasks=document.querySelectorAll('.sched-task');
+  const done=[...tasks].filter(t=>t.dataset.done==='true').length;
+  const pct=Math.round(done/tasks.length*100);
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+}
+updateProgress();
+</script>
+</body>
+</html>
