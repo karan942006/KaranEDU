@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "819905509192",
+    "project_id": "karanedu",
+    "storage_bucket": "karanedu.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819905509192:android:46aa7ebc3cfb93d558257d",
+        "android_client_info": {
+          "package_name": "com.aistudio.eduai.pqtrvx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl6tYvqP5hUk9lt8iifRK7PHUHoqimy5U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

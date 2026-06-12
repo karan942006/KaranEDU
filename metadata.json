@@ -1,0 +1,6 @@
+{
+  "name": "KaranEDU",
+  "description": "An AI-powered personalized learning assistant that aligns with SDG 4 (Quality Education). Features include an interactive AI chat tutor, automated test quizzes, localized educational resources, and a smart study planner.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
