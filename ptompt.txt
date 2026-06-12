@@ -1,0 +1,641 @@
+Here is a highly detailed, production-grade prompt you can use with any AI code generator (ChatGPT, Gemini, Copilot, etc.) to build the full KaranEDU project:
+
+---
+
+# 🎓 KaranEDU – Full Build Prompt
+
+---
+
+## 🧠 PROJECT CONTEXT
+
+You are building **KaranEDU**, a full-stack AI-powered personalized learning web application that supports **UN SDG 4: Quality Education**. The platform helps students learn any topic with AI tutoring, personalized roadmaps, quiz generation, and smart notes — available 24/7 at no cost.
+
+**Target Users:** College/school students aged 15–25 in India and developing countries who lack access to personal tutors.
+
+---
+
+## 🎨 DESIGN SYSTEM (Follow Exactly)
+
+**Visual Identity:** Deep navy + electric indigo + warm amber. Clean, modern EdTech aesthetic — feels like a premium learning platform, not a student project.
+
+**Color Palette:**
+```
+--bg-primary:     #0A0E1A   (deep navy background)
+--bg-card:        #111827   (card surfaces)
+--bg-elevated:    #1A2235   (elevated panels)
+--accent-primary: #6366F1   (electric indigo — CTAs, active states)
+--accent-glow:    #818CF8   (lighter indigo for hover glows)
+--accent-amber:   #F59E0B   (warm amber — streaks, highlights, badges)
+--accent-green:   #10B981   (success, completed states)
+--text-primary:   #F9FAFB
+--text-secondary: #9CA3AF
+--text-muted:     #4B5563
+--border:         #1F2937
+```
+
+**Typography:**
+- Display/Headings: `'Plus Jakarta Sans', sans-serif` (Google Fonts) — weights 700, 800
+- Body: `'Inter', sans-serif` — weights 400, 500
+- Code/Data: `'JetBrains Mono', monospace`
+
+**Signature Design Element:** Every page has a subtle animated gradient mesh in the top-right corner (CSS radial gradients animating opacity) that gives a "living" feel without being distracting.
+
+**UI Rules:**
+- Border radius: `12px` for cards, `8px` for buttons, `999px` for badges/pills
+- Card style: `background: var(--bg-card); border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(99,102,241,0.08)`
+- Active nav items get a left-border accent: `border-left: 3px solid var(--accent-primary)`
+- All primary buttons: indigo background with subtle glow on hover (`box-shadow: 0 0 20px rgba(99,102,241,0.4)`)
+- Micro-animations: `transition: all 0.2s ease` on interactive elements
+- Respect `prefers-reduced-motion`
+
+---
+
+## 📁 FILE STRUCTURE
+
+```
+KaranEDU/
+├── frontend/
+│   ├── index.html          ← Homepage (public)
+│   ├── login.html          ← Login / Sign-up
+│   ├── dashboard.html      ← Student dashboard (protected)
+│   ├── chatbot.html        ← AI Tutor chat (protected)
+│   ├── roadmap.html        ← Learning path generator (protected)
+│   ├── quiz.html           ← Quiz generator (protected)
+│   ├── notes.html          ← Notes generator (protected)
+│   ├── styles.css          ← Global styles (shared across all pages)
+│   └── app.js              ← Firebase auth + shared utilities
+│
+├── backend/
+│   ├── main.py             ← FastAPI app entry point, CORS, routes
+│   ├── chatbot.py          ← /api/chat endpoint (Gemini)
+│   ├── roadmap.py          ← /api/roadmap endpoint (Gemini)
+│   ├── quiz.py             ← /api/quiz endpoint (Gemini)
+│   ├── notes.py            ← /api/notes endpoint (Gemini)
+│   └── config.py           ← Environment variables, API keys
+│
+├── requirements.txt
+├── .env                    ← GEMINI_API_KEY, FIREBASE config
+└── README.md
+```
+
+---
+
+## 🌐 PAGE 1: `index.html` — Homepage
+
+### Layout Sections (in order):
+
+**1. Navbar**
+- Logo: Graduation cap emoji + "KaranEDU" in `Plus Jakarta Sans 700`
+- Nav links: Home, Features, About, Contact
+- CTA button: "Start Learning Free" → links to `login.html`
+- Sticky on scroll with `backdrop-filter: blur(12px)` on scroll
+
+**2. Hero Section**
+- Left side: Badge pill "🎓 Powered by Gemini AI", H1 headline: "Your Personal AI Tutor — Available 24/7", subtext: 2-line description about democratizing education, two CTA buttons: "Get Started Free" (primary/indigo) + "Watch Demo" (ghost/outline)
+- Right side: Animated mockup card showing a fake chatbot conversation (CSS-only typing animation showing a student asking "Explain recursion" and AI replying)
+- Background: The animated gradient mesh signature element
+
+**3. Stats Bar**
+- 3 stats in a row with large numbers animated via Intersection Observer:
+  - `10,000+` Students Learning
+  - `5` AI-Powered Features  
+  - `100%` Free to Use
+
+**4. Features Section**
+- Section title: "Everything You Need to Learn Smarter"
+- 5 feature cards in a CSS Grid (3-col desktop, 2-col tablet, 1-col mobile):
+  1. 🤖 AI Chatbot Tutor — "Ask any question, get instant expert answers"
+  2. 🗺️ Learning Roadmap — "Personalized week-by-week study plans"
+  3. 📝 Quiz Generator — "Test yourself with AI-generated MCQs"
+  4. 📚 Notes Generator — "Summarized notes with key concepts"
+  5. 📊 Progress Dashboard — "Track your learning streak and scores"
+- Each card: icon (emoji in 48px colored circle), title, description, hover lift effect
+
+**5. How It Works**
+- 3 steps with connecting dotted line:
+  1. Create Account (Google Sign-In)
+  2. Choose Your Topic
+  3. Learn with AI
+- Simple horizontal layout on desktop, vertical on mobile
+
+**6. SDG Badge Section**
+- Small section with UN SDG 4 logo description, text: "KaranEDU is built in support of UN Sustainable Development Goal 4 — Quality Education. We believe every student deserves access to personalized learning."
+
+**7. Footer**
+- Logo, tagline, nav links, "Built for SDG 4 🎓", GitHub link
+
+---
+
+## 🔐 PAGE 2: `login.html` — Authentication
+
+### Layout:
+- Split screen: Left = decorative panel (dark, indigo gradient, KaranEDU logo, tagline, 3 feature bullets with checkmarks), Right = auth form panel
+
+### Auth Panel Content:
+- Heading: "Welcome Back" / "Join KaranEDU"
+- Tab switcher: Login | Sign Up (CSS tabs, no page reload)
+- **Login Tab:** Email field, Password field, "Forgot Password?" link, "Sign In" button, divider "or", "Continue with Google" button (white with Google logo SVG)
+- **Sign Up Tab:** Full Name field, Email field, Password field, Skill Level dropdown (Beginner / Intermediate / Advanced), Subject Interest field, "Create Account" button, Google sign-in option
+- Firebase Auth handles both Google OAuth and email/password
+- On successful auth: redirect to `dashboard.html`
+- Show error messages inline below fields (red text)
+- Loading spinner on buttons during auth
+
+---
+
+## 📊 PAGE 3: `dashboard.html` — Student Dashboard
+
+### Layout:
+- **Sidebar (fixed left, 240px):**
+  - KaranEDU logo at top
+  - Student avatar (initials-based if no photo) + name + level badge
+  - Nav items with icons: Dashboard, AI Tutor, Learning Path, Quiz, Notes
+  - Active state: left border accent + bg highlight
+  - Collapse to icon-only on mobile (hamburger toggle)
+
+- **Main Content Area:**
+
+**Welcome Header:**
+- "Good morning, [Name] 👋" with current date
+- Quick action buttons: "Ask AI Tutor", "Generate Quiz", "Create Notes"
+
+**Progress Cards Row (4 cards):**
+1. Lessons Completed — number + circular progress ring (SVG)
+2. Quiz Average Score — percentage + color coded (green ≥70, amber 50-69, red <50)
+3. Learning Streak — number of days + fire emoji
+4. Topics Explored — count
+
+**Recent Activity Section:**
+- Table or card list showing last 5 interactions (type: Chat/Quiz/Notes, topic, date, score if applicable)
+- Data pulled from Firebase Firestore
+
+**Quick Stats Chart:**
+- A simple bar chart built with pure CSS (no Chart.js) showing quiz scores over last 7 days
+- Bars are `div` elements with `height` set via inline style, colored with indigo gradient
+
+**Currently Learning:**
+- Card showing the active learning roadmap topic if one exists in Firebase, with progress bar and "Continue" button
+
+---
+
+## 🤖 PAGE 4: `chatbot.html` — AI Tutor
+
+### Layout:
+- Full-height chat interface (like ChatGPT)
+- **Left panel (260px):** Chat history sidebar — list of past chat sessions stored in Firebase, each showing topic title + date, "New Chat" button at top
+- **Right panel (flex-grow):** 
+  - Chat header: "AI Tutor" title + "Powered by Gemini" badge
+  - **Messages area:** Scrollable, `height: calc(100vh - 160px)`
+    - User messages: right-aligned, indigo bubble
+    - AI messages: left-aligned, dark card bubble, with avatar (robot emoji in circle)
+    - **Typing indicator:** Three animated dots (CSS bounce animation) shown while waiting
+    - Support markdown-style formatting: code blocks get styled `<pre><code>` with amber border-left, bold text, bullet points
+  - **Input bar (fixed bottom):**
+    - Textarea (auto-resize, max 4 rows), send button (arrow icon, indigo)
+    - Keyboard shortcut: Enter = send, Shift+Enter = new line
+    - Suggested prompts (shown when chat is empty): 4 pill buttons like "Explain Machine Learning", "Python Interview Questions", "What is OOP?", "Explain Neural Networks"
+
+### Frontend → Backend Flow:
+```javascript
+// On send:
+const response = await fetch('http://localhost:8000/api/chat', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}`},
+  body: JSON.stringify({ message: userInput, history: conversationHistory })
+})
+const data = await response.json()
+// Display data.reply in chat
+// Save to Firebase: users/{uid}/chats/{chatId}/messages
+```
+
+---
+
+## 🗺️ PAGE 5: `roadmap.html` — Learning Path Generator
+
+### Layout:
+- **Left panel — Input Form:**
+  - Heading: "Generate Your Learning Path"
+  - Form fields:
+    - Subject input (text): "What do you want to learn?"
+    - Skill Level (radio buttons with card-style selection): Beginner / Intermediate / Advanced — each as a clickable card that highlights when selected
+    - Duration (select): 2 Weeks / 4 Weeks / 8 Weeks / 3 Months
+    - Goal (textarea): "What's your learning goal?" (optional)
+  - "Generate Roadmap" button (full width, indigo)
+  - Below button: "Save to Dashboard" button (appears after generation)
+
+- **Right panel — Generated Roadmap:**
+  - Loading skeleton (shimmer animation) while API call is in progress
+  - Rendered roadmap as a visual timeline:
+    - Each week = a card with week number badge, title, bullet list of topics
+    - Connecting vertical line between weeks (CSS `::before` pseudo-element)
+    - Topics are checkboxes — checked state saved to Firebase
+    - Week cards animate in sequentially with `@keyframes fadeSlideUp` staggered by 0.1s each
+
+### API Call:
+```javascript
+fetch('http://localhost:8000/api/roadmap', {
+  method: 'POST',
+  body: JSON.stringify({ subject, level, duration, goal })
+})
+```
+
+---
+
+## 📝 PAGE 6: `quiz.html` — Quiz Generator
+
+### Layout:
+**Phase 1 — Setup Screen:**
+- Centered card (max-width 520px)
+- Title: "Quiz Generator"
+- Fields: Topic input, Number of Questions (5/10/15 — segmented control), Difficulty (Easy/Medium/Hard — pill toggle)
+- "Generate Quiz" button
+
+**Phase 2 — Quiz Taking Screen (replaces setup):**
+- Progress bar at top showing current question / total
+- Question number badge (e.g., "Q3 of 10")
+- Question text (large, clear typography)
+- 4 answer options as clickable cards (A/B/C/D):
+  - Default: dark card with border
+  - Hover: indigo border glow
+  - Selected: indigo fill
+  - After submit: correct = green fill + checkmark, wrong = red fill + X, correct answer highlighted green
+- "Next Question" button (disabled until option selected)
+- Timer per question (optional): 30-second countdown shown as shrinking progress bar
+
+**Phase 3 — Results Screen:**
+- Big score circle (SVG animated stroke): e.g., "8/10"
+- Grade label: Excellent / Good / Keep Practicing
+- Topic-by-topic breakdown list
+- "Try Again" and "New Quiz" buttons
+- Score automatically saved to Firebase: `users/{uid}/quizzes/{quizId}`
+
+### API Call:
+```javascript
+// Response must be JSON array of question objects:
+// [{ question, options: [A,B,C,D], correct: "B", explanation }]
+fetch('http://localhost:8000/api/quiz', {
+  method: 'POST',
+  body: JSON.stringify({ topic, count, difficulty })
+})
+```
+
+---
+
+## 📚 PAGE 7: `notes.html` — Study Notes Generator
+
+### Layout:
+- Two-panel layout (50/50 split on desktop, stacked on mobile)
+
+**Left Panel — Input:**
+- Heading: "Generate Smart Notes"
+- Topic input (large, prominent)
+- Depth selector: Quick Summary / Standard / Deep Dive
+- Include sections toggles (checkboxes): Key Concepts, Summary, Important Points, Examples, Common Mistakes, Formula/Syntax if applicable
+- "Generate Notes" button
+- Recent topics (last 5) shown as clickable pills below
+
+**Right Panel — Notes Output:**
+- Skeleton loader during generation
+- Rendered notes with clear sections, each in its own styled card:
+  - 📌 **Key Concepts** — bullet list
+  - 📋 **Summary** — paragraph
+  - ⭐ **Important Points** — numbered list
+  - 💡 **Examples** — code block or text examples
+  - ⚠️ **Common Mistakes** — red-tinted card
+- Action buttons: Copy to Clipboard, Download as .txt, Save to Firebase
+- Saved notes appear in a "My Notes" accordion section below
+
+---
+
+## ⚙️ BACKEND: FastAPI
+
+### `main.py`
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import firebase_admin
+from firebase_admin import credentials, auth
+from chatbot import router as chatbot_router
+from roadmap import router as roadmap_router
+from quiz import router as quiz_router
+from notes import router as notes_router
+
+app = FastAPI(title="KaranEDU API", version="1.0.0")
+
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# Include routers
+app.include_router(chatbot_router, prefix="/api")
+app.include_router(roadmap_router, prefix="/api")
+app.include_router(quiz_router, prefix="/api")
+app.include_router(notes_router, prefix="/api")
+
+@app.get("/health")
+def health(): return {"status": "KaranEDU API running"}
+```
+
+### `config.py`
+```python
+import os
+from dotenv import load_dotenv
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+```
+
+### `chatbot.py`
+```python
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+
+router = APIRouter()
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+class ChatMessage(BaseModel):
+    role: str  # "user" or "assistant"
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+    history: Optional[List[ChatMessage]] = []
+
+@router.post("/chat")
+async def chat(req: ChatRequest):
+    system_prompt = """You are KaranEDU's AI Tutor. You help students learn any subject clearly and engagingly.
+    - Use simple language appropriate for students
+    - Provide examples and analogies
+    - For code, always use proper code blocks
+    - Be encouraging and supportive
+    - Format responses with clear structure using markdown"""
+    
+    history_text = "\n".join([f"{m.role}: {m.content}" for m in req.history[-6:]])
+    full_prompt = f"{system_prompt}\n\nConversation history:\n{history_text}\n\nStudent: {req.message}\n\nTutor:"
+    
+    try:
+        response = model.generate_content(full_prompt)
+        return {"reply": response.text, "status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+### `roadmap.py`
+```python
+from fastapi import APIRouter
+from pydantic import BaseModel
+import google.generativeai as genai
+import json, re
+from config import GEMINI_API_KEY
+
+router = APIRouter()
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+class RoadmapRequest(BaseModel):
+    subject: str
+    level: str       # Beginner / Intermediate / Advanced
+    duration: str    # "4 Weeks", "8 Weeks", etc.
+    goal: str = ""
+
+@router.post("/roadmap")
+async def generate_roadmap(req: RoadmapRequest):
+    prompt = f"""Create a detailed learning roadmap for:
+Subject: {req.subject}
+Level: {req.level}
+Duration: {req.duration}
+Goal: {req.goal or 'General mastery'}
+
+Return ONLY valid JSON in this exact format, no other text:
+{{
+  "subject": "{req.subject}",
+  "level": "{req.level}",
+  "weeks": [
+    {{
+      "week": 1,
+      "title": "Week title",
+      "topics": ["topic1", "topic2", "topic3"],
+      "project": "Mini project or exercise"
+    }}
+  ]
+}}"""
+    
+    response = model.generate_content(prompt)
+    clean = re.sub(r'```json|```', '', response.text).strip()
+    return json.loads(clean)
+```
+
+### `quiz.py`
+```python
+from fastapi import APIRouter
+from pydantic import BaseModel
+import google.generativeai as genai
+import json, re
+from config import GEMINI_API_KEY
+
+router = APIRouter()
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+class QuizRequest(BaseModel):
+    topic: str
+    count: int = 5       # 5, 10, or 15
+    difficulty: str = "Medium"
+
+@router.post("/quiz")
+async def generate_quiz(req: QuizRequest):
+    prompt = f"""Generate {req.count} multiple choice questions about "{req.topic}" at {req.difficulty} difficulty.
+
+Return ONLY valid JSON array, no other text:
+[
+  {{
+    "question": "Question text here?",
+    "options": {{"A": "Option A", "B": "Option B", "C": "Option C", "D": "Option D"}},
+    "correct": "A",
+    "explanation": "Brief explanation of why this is correct"
+  }}
+]"""
+    
+    response = model.generate_content(prompt)
+    clean = re.sub(r'```json|```', '', response.text).strip()
+    return {"questions": json.loads(clean), "topic": req.topic}
+```
+
+### `notes.py`
+```python
+from fastapi import APIRouter
+from pydantic import BaseModel
+from typing import List
+import google.generativeai as genai
+import json, re
+from config import GEMINI_API_KEY
+
+router = APIRouter()
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+class NotesRequest(BaseModel):
+    topic: str
+    depth: str = "Standard"    # Quick Summary / Standard / Deep Dive
+    sections: List[str] = ["Key Concepts", "Summary", "Important Points", "Examples"]
+
+@router.post("/notes")
+async def generate_notes(req: NotesRequest):
+    sections_str = ", ".join(req.sections)
+    prompt = f"""Generate comprehensive study notes for "{req.topic}" at {req.depth} depth.
+Include these sections: {sections_str}
+
+Return ONLY valid JSON, no other text:
+{{
+  "topic": "{req.topic}",
+  "depth": "{req.depth}",
+  "sections": {{
+    "Key Concepts": ["concept1", "concept2", "concept3"],
+    "Summary": "2-3 paragraph summary here",
+    "Important Points": ["point1", "point2", "point3"],
+    "Examples": ["example1", "example2"],
+    "Common Mistakes": ["mistake1", "mistake2"]
+  }}
+}}"""
+    
+    response = model.generate_content(prompt)
+    clean = re.sub(r'```json|```', '', response.text).strip()
+    return json.loads(clean)
+```
+
+---
+
+## 🔥 FIREBASE SETUP
+
+### Firebase Services Used:
+1. **Firebase Authentication** — Google OAuth + Email/Password
+2. **Cloud Firestore** — NoSQL database for all user data
+
+### Firestore Schema:
+```
+/users/{uid}
+  - name: string
+  - email: string
+  - level: "Beginner" | "Intermediate" | "Advanced"
+  - subject: string
+  - createdAt: timestamp
+  - streak: number
+  - lastActiveDate: timestamp
+
+/users/{uid}/chats/{chatId}
+  - topic: string (first message as title)
+  - createdAt: timestamp
+  - messages: array of {role, content, timestamp}
+
+/users/{uid}/roadmaps/{roadmapId}
+  - subject: string
+  - level: string
+  - generatedAt: timestamp
+  - completedTopics: array of strings
+
+/users/{uid}/quizzes/{quizId}
+  - topic: string
+  - score: number
+  - total: number
+  - percentage: number
+  - takenAt: timestamp
+
+/users/{uid}/notes/{noteId}
+  - topic: string
+  - depth: string
+  - content: object (sections)
+  - savedAt: timestamp
+```
+
+### `app.js` (shared Firebase utilities):
+```javascript
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, 
+         signInWithEmailAndPassword, createUserWithEmailAndPassword,
+         onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, addDoc, 
+         collection, query, orderBy, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-firestore.js";
+
+const firebaseConfig = {
+  // paste your Firebase config here from Firebase Console
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const googleProvider = new GoogleAuthProvider();
+
+// Auth guard — call at top of every protected page
+export function requireAuth(callback) {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = '/login.html';
+    else callback(user);
+  });
+}
+
+// Get Firebase ID token for backend API calls
+export async function getIdToken() {
+  const user = auth.currentUser;
+  return user ? await user.getIdToken() : null;
+}
+```
+
+---
+
+## 📦 `requirements.txt`
+```
+fastapi==0.110.0
+uvicorn==0.27.0
+google-generativeai==0.4.0
+firebase-admin==6.4.0
+python-dotenv==1.0.0
+pydantic==2.6.0
+```
+
+---
+
+## 🚀 RUNNING THE PROJECT
+
+```bash
+# Backend
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+
+# Frontend
+# Just open frontend/index.html in browser
+# OR serve with: python -m http.server 3000
+```
+
+---
+
+## ✅ ADDITIONAL IMPLEMENTATION NOTES
+
+1. **Route Protection:** Every page except `index.html` and `login.html` must call `requireAuth()` on load. Redirect unauthenticated users to `login.html`.
+
+2. **Loading States:** Every API call must show a skeleton loader or spinner. Never leave the UI blank while waiting.
+
+3. **Error Handling:** All API calls wrapped in try/catch. Show user-friendly error toast notifications (CSS-only slide-in toast from bottom-right).
+
+4. **Responsive Design:** Sidebar collapses to hamburger menu on screens <768px. All grids stack to single column on mobile.
+
+5. **Streak Logic:** On every dashboard load, compare `lastActiveDate` with today. If different day, increment streak by 1 and update `lastActiveDate`.
+
+6. **Markdown Rendering:** In the chatbot, implement a minimal markdown parser in vanilla JS: detect ` ```code``` ` blocks, `**bold**`, `*italic*`, `- bullet` and render as proper HTML.
+
+7. **Local Storage Caching:** Cache the last generated roadmap and notes in `localStorage` so the page loads instantly before Firebase data arrives.
+
+8. **Accessibility:** All interactive elements must have `aria-label`. Focus states must be visible. Color contrast ratios must meet WCAG AA minimum.
+
+9. **Page Transitions:** Add a simple CSS fade-in on page load (`@keyframes fadeIn` on `body`).
+
+10. **`.env` file:**
+```
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+---
+
+This prompt gives you everything needed to build a complete, polished, submission-ready KaranEDU application. Feed it to any AI code generator page by page, or use it as your full development specification. Good luck! 🎓
