@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.EduAIViewModel
+import com.example.ui.KaranEDUViewModel
 import com.example.data.FirebaseService
 import com.example.data.UserProfile
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    viewModel: EduAIViewModel,
+    viewModel: KaranEDUViewModel,
     onNavigateToDashboard: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
@@ -110,7 +110,7 @@ fun LoginScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.School,
-                        contentDescription = "EduAI Logo",
+                        contentDescription = "KaranEDU Logo",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(44.dp)
                     )
@@ -120,7 +120,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(20.dp))
             
             Text(
-                text = "EduAI",
+                text = "KaranEDU",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,

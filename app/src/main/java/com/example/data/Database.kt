@@ -46,7 +46,7 @@ data class StudyTask(
 // --- DAOs ---
 
 @Dao
-interface eduaiDao {
+interface karaneduDao {
     // Profile
     @Query("SELECT * FROM user_profile WHERE id = 1")
     fun getUserProfileFlow(): Flow<UserProfile?>
@@ -105,7 +105,7 @@ interface eduaiDao {
     exportSchema = false
 )
 abstract class EduDatabase : RoomDatabase() {
-    abstract fun dao(): eduaiDao
+    abstract fun dao(): karaneduDao
 
     companion object {
         @Volatile
@@ -116,7 +116,7 @@ abstract class EduDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     EduDatabase::class.java,
-                    "eduai_database"
+                    "karanedu_database"
                 )
                 .fallbackToDestructiveMigration()
                 .build()
@@ -129,7 +129,7 @@ abstract class EduDatabase : RoomDatabase() {
 
 // --- Repository Pattern ---
 
-class EduRepository(val dao: eduaiDao) {
+class EduRepository(val dao: karaneduDao) {
     val userProfile: Flow<UserProfile?> = dao.getUserProfileFlow()
     val allQuizzes: Flow<List<QuizResult>> = dao.getAllQuizResultsFlow()
     val learningLogs: Flow<List<LearningHistory>> = dao.getAllLearningHistoryFlow()

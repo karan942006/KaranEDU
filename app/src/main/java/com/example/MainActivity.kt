@@ -11,7 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.ui.EduAIViewModel
+import com.example.ui.KaranEDUViewModel
 import com.example.ui.screens.*
 import com.example.ui.theme.MyApplicationTheme
 
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 // Initialize the centralized ViewModel
-                val viewModel: EduAIViewModel = viewModel()
+                val viewModel: KaranEDUViewModel = viewModel()
                 val profile by viewModel.userProfile.collectAsState()
                 
                 val navController = rememberNavController()

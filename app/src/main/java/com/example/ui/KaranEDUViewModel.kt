@@ -39,7 +39,7 @@ sealed interface FlashcardUiState {
     data class Error(val message: String) : FlashcardUiState
 }
 
-class EduAIViewModel(application: Application) : AndroidViewModel(application) {
+class KaranEDUViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: EduRepository
     val userProfile: StateFlow<UserProfile?>

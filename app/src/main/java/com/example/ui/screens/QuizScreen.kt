@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.EduAIViewModel
+import com.example.ui.KaranEDUViewModel
 import com.example.ui.QuizUiState
 import com.example.ui.theme.AccentAmber
 import com.example.ui.theme.AccentOrange
@@ -29,7 +29,7 @@ import com.example.ui.theme.AccentOrange
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun QuizScreen(
-    viewModel: EduAIViewModel,
+    viewModel: KaranEDUViewModel,
     onNavigateBack: () -> Unit
 ) {
     var topicInput by remember { mutableStateOf("") }

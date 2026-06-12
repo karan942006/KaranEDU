@@ -21,14 +21,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.EduAIViewModel
+import com.example.ui.KaranEDUViewModel
 import com.example.ui.theme.AccentAmber
 import com.example.ui.theme.AccentOrange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
-    viewModel: EduAIViewModel,
+    viewModel: KaranEDUViewModel,
     onNavigateToChat: () -> Unit,
     onNavigateToQuiz: () -> Unit,
     onNavigateToPlanner: () -> Unit,
@@ -153,7 +153,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "EduAI uses generative artificial intelligence to offer customized tutoring support and study guides globally, completely offline-first.",
+                            text = "KaranEDU uses generative artificial intelligence to offer customized tutoring support and study guides globally, completely offline-first.",
                             fontSize = 12.sp,
                             color = Color.White.copy(alpha = 0.9f)
                         )

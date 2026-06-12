@@ -23,13 +23,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.AIFlashcard
-import com.example.ui.EduAIViewModel
+import com.example.ui.KaranEDUViewModel
 import com.example.ui.FlashcardUiState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun FlashcardScreen(
-    viewModel: EduAIViewModel,
+    viewModel: KaranEDUViewModel,
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.flashcardUiState.collectAsState()

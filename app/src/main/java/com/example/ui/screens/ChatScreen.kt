@@ -31,14 +31,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.ChatUiState
-import com.example.ui.EduAIViewModel
+import com.example.ui.KaranEDUViewModel
 import com.example.ui.theme.AccentAmber
 import com.example.ui.theme.AccentOrange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
-    viewModel: EduAIViewModel,
+    viewModel: KaranEDUViewModel,
     onNavigateBack: () -> Unit
 ) {
     var questionText by remember { mutableStateOf("") }

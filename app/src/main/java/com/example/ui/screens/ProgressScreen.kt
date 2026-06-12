@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.EduAIViewModel
+import com.example.ui.KaranEDUViewModel
 import com.example.ui.theme.AccentAmber
 import com.example.ui.theme.AccentOrange
 import java.util.*
@@ -30,7 +30,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressScreen(
-    viewModel: EduAIViewModel,
+    viewModel: KaranEDUViewModel,
     onNavigateBack: () -> Unit
 ) {
     val profile by viewModel.userProfile.collectAsState()
@@ -331,7 +331,7 @@ fun ProgressScreen(
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "EduAI empowers students by removing accessibility constraints. Anyone can instantly set up a customized curriculum, generate targeted diagnostic assessments, and raise high-quality tutoring queries in real-time.",
+                            text = "KaranEDU empowers students by removing accessibility constraints. Anyone can instantly set up a customized curriculum, generate targeted diagnostic assessments, and raise high-quality tutoring queries in real-time.",
                             fontSize = 12.sp,
                             lineHeight = 16.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
