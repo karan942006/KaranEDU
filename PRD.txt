@@ -1,391 +1,305 @@
-To maximize marks, choose a project that is:
+**KaranEDU** is actually a very good SDG project because it is simple to build, uses AI, and directly supports **SDG 4: Quality Education**.
 
-* Easy to build
-* Uses AI clearly
-* Solves a real SDG problem
-* Has attractive screenshots
-* Can be deployed and uploaded to GitHub
-
-# Recommended Project (Best for Students)
-
-## Project Name
-
-**EduAI – Personalized Learning Assistant**
-
-### SDG Selected
-
-🎯 SDG 4 – Quality Education
-
-### Why This SDG?
-
-Millions of students struggle to access personalized learning support. Many cannot afford private tutors and often get stuck while studying.
-
----
-
-# Complete PRD (Product Requirement Document)
-
-## 1. Project Overview
+## Project Overview
 
 ### Project Name
 
-EduAI – Personalized Learning Assistant
+**KaranEDU – AI Personalized Learning & Chatbot Tutor**
 
-### SDG
+### SDG Selected
 
-SDG 4: Quality Education
+United Nations Sustainable Development Goals **SDG 4: Quality Education**
 
-### Problem Statement
+### Why This SDG?
 
-Many students face difficulties in understanding concepts, completing assignments, and receiving personalized guidance. Traditional classroom teaching cannot always provide individual attention to every student.
-
-As a result:
-
-* Students lose interest in learning.
-* Academic performance decreases.
-* Doubts remain unresolved.
-* Learning becomes inefficient.
-
-### Objective
-
-Develop an AI-powered educational assistant that:
-
-* Answers student questions.
-* Explains concepts in simple language.
-* Generates quizzes.
-* Recommends study resources.
-* Provides personalized learning support.
+Many students do not have access to structured learning, personalized guidance, or instant doubt-solving support. KaranEDU will provide an AI tutor that helps students learn anytime.
 
 ---
 
-# 2. Target Users
+# Simple Project Idea
 
-### Primary Users
+Instead of making a very complex system, create a web application with:
 
-* School Students
-* College Students
-* Competitive Exam Aspirants
+### 1. AI Chatbot Tutor
 
-### Secondary Users
+Students can ask:
 
-* Teachers
-* Educational Institutions
+* What is Machine Learning?
+* Explain Photosynthesis.
+* Give me Java Interview Questions.
+* Explain Python Loops.
 
----
-
-# 3. Solution Description
-
-EduAI acts as a virtual tutor available 24/7.
-
-The user enters a question such as:
-
-> "Explain Artificial Intelligence"
-
-The AI:
-
-* Understands the query
-* Generates a simple explanation
-* Suggests resources
-* Creates practice questions
-
-This makes learning interactive and personalized.
+AI provides answers instantly.
 
 ---
 
-# 4. Core Features
+### 2. Personalized Learning Roadmap
 
-## Feature 1: AI Chat Tutor
+Student selects:
 
-### Description
+* Subject
+* Skill Level (Beginner, Intermediate, Advanced)
 
-Students can ask doubts in natural language.
-
-### Example
-
-User:
-
-> What is Machine Learning?
-
-AI:
-
-> Machine Learning is a branch of AI that enables computers to learn from data without explicit programming.
-
----
-
-## Feature 2: Quiz Generator
-
-### Description
-
-Automatically generates quizzes from any topic.
-
-### Example
-
-Topic:
-
-> Artificial Intelligence
-
-Generated Quiz:
-
-1. What is AI?
-2. What is Machine Learning?
-3. What is NLP?
-
----
-
-## Feature 3: Resource Recommendation
-
-### Description
-
-Suggests:
-
-* YouTube videos
-* Articles
-* Notes
-* Books
-
-Based on student's query.
-
----
-
-## Feature 4: Learning Dashboard
-
-### Description
-
-Shows:
-
-* Questions asked
-* Topics learned
-* Quiz scores
-* Learning progress
-
----
-
-## Feature 5: AI Study Planner
-
-### Description
-
-Creates personalized study schedules.
+AI generates:
 
 Example:
 
-| Time     | Subject  |
-| -------- | -------- |
-| 9-10 AM  | AI       |
-| 10-11 AM | DBMS     |
-| 11-12 PM | Aptitude |
+**Python Learning Path**
+
+Week 1:
+
+* Variables
+* Data Types
+
+Week 2:
+
+* Loops
+* Functions
+
+Week 3:
+
+* OOP
+
+Week 4:
+
+* Mini Project
 
 ---
 
-# 5. User Flow
+### 3. Quiz Generator
 
-```text
-Open App
-     ↓
-Login/Register
-     ↓
-Dashboard
-     ↓
-Ask Question
-     ↓
-AI Generates Answer
-     ↓
-Take Quiz
-     ↓
-View Progress
+Student enters topic:
+
+```
+Artificial Intelligence
 ```
 
----
+AI generates:
 
-# 6. Technology Stack
-
-## Frontend
-
-* Android Studio
-* XML
-* Java
-
-## Backend
-
-* Firebase Authentication
-* Firebase Firestore
-
-## AI
-
-* OpenAI API
-  OR
-* Hugging Face API
-
-## Database
-
-* Firebase Firestore
-
-## Version Control
-
-* GitHub
+Q1. What is AI?
+A) ...
+B) ...
+C) ...
+D) ...
 
 ---
 
-# 7. System Architecture
+### 4. Study Notes Generator
 
-```text
-Student
-   ↓
-Android App
-   ↓
-Firebase
-   ↓
-OpenAI API
-   ↓
-AI Response
-   ↓
-Student
+Student enters:
+
+```
+Neural Networks
 ```
 
+AI generates:
+
+* Key Concepts
+* Summary
+* Important Points
+
 ---
 
-# 8. Database Design
+### 5. Progress Dashboard
 
-### Users Collection
+Show:
+
+* Lessons Completed
+* Quiz Score
+* Learning Streak
+
+Simple charts are enough.
+
+---
+
+# Technology Stack (Easy Version)
+
+### Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+OR
+
+* React
+
+### Backend
+
+* Python
+* FastAPI
+
+### Database
+
+* Firebase
+
+OR
+
+* Supabase
+
+### AI
+
+* Gemini API (Free Tier)
+
+Use:
+
+[Google AI Studio](https://aistudio.google.com?utm_source=chatgpt.com)
+
+Generate API key and connect Gemini.
+
+---
+
+# Simple Website Pages
+
+### Home Page
+
+Sections:
+
+* Hero Banner
+* Features
+* Login Button
+
+---
+
+### Login Page
+
+Use:
+
+* Google Sign In
+
+Firebase Authentication
+
+---
+
+### Dashboard
+
+Show:
+
+* Welcome Student
+* Progress
+* Quick Actions
+
+---
+
+### AI Tutor Page
+
+Chat interface like ChatGPT.
+
+Student types question.
+
+Gemini responds.
+
+---
+
+### Learning Path Page
+
+Generate personalized roadmap.
+
+---
+
+### Quiz Page
+
+Generate MCQs.
+
+Show score.
+
+---
+
+### Notes Page
+
+Generate summarized notes.
+
+---
+
+# Database Structure
+
+### Users
 
 ```json
 {
-  "userId":"",
-  "name":"",
-  "email":"",
-  "createdAt":""
+  "name":"Karan",
+  "email":"karan@gmail.com",
+  "level":"Beginner"
 }
 ```
 
-### Quiz Collection
+### Progress
 
 ```json
 {
-  "topic":"",
-  "score":"",
-  "date":""
-}
-```
-
-### Learning History Collection
-
-```json
-{
-  "question":"",
-  "answer":"",
-  "timestamp":""
+  "course":"Python",
+  "completed":60,
+  "quizScore":85
 }
 ```
 
 ---
 
-# 9. Screens Required for Submission
-
-### Screenshot 1
-
-Login Page
-
-### Screenshot 2
-
-Registration Page
-
-### Screenshot 3
-
-Dashboard
-
-### Screenshot 4
-
-AI Chat Screen
-
-### Screenshot 5
-
-Quiz Generator
-
-### Screenshot 6
-
-Study Planner
-
-### Screenshot 7
-
-Learning Progress Dashboard
-
-### Screenshot 8
-
-Firebase Database
-
-### Screenshot 9
-
-GitHub Repository
-
----
-
-# 10. AI Features
-
-### Natural Language Processing
-
-Used to:
-
-* Understand student questions
-* Generate explanations
-
-### Generative AI
-
-Used to:
-
-* Create answers
-* Generate quizzes
-* Recommend resources
-
----
-
-# 11. Future Scope
-
-* Voice-based learning assistant
-* Multilingual support
-* AI-powered mock interviews
-* Offline mode
-* Personalized learning analytics
-* Teacher dashboard
-* Mobile and Web version
-* AI-generated notes and summaries
-
----
-
-# 12. GitHub Structure
+# GitHub Structure
 
 ```text
-EduAI/
+KaranEDU/
 │
-├── app/
+├── frontend/
+│   ├── index.html
+│   ├── dashboard.html
+│   ├── chatbot.html
+│   └── styles.css
+│
+├── backend/
+│   ├── main.py
+│   ├── chatbot.py
+│   └── roadmap.py
+│
 ├── screenshots/
-├── docs/
+│
 ├── README.md
-├── .gitignore
-└── LICENSE
+│
+└── requirements.txt
 ```
 
 ---
 
-# 13. Evaluation Points Covered
+# Screenshots Required for Submission
 
-✅ SDG Selected
+Take screenshots of:
 
-✅ Real Problem Identified
+1. Homepage
+2. Login Page
+3. Dashboard
+4. AI Chatbot
+5. Learning Roadmap
+6. Quiz Generator
+7. Notes Generator
 
-✅ AI-Based Solution
+---
 
-✅ Working Prototype
+# Future Scope
 
-✅ Screenshots
+Add:
 
-✅ GitHub Repository
+* Mobile App
+* Voice Tutor
+* Multiple Languages
+* AI Video Lessons
+* Student Ranking System
+* Teacher Dashboard
+* Offline Learning Mode
 
-✅ Future Scope
+---
 
-✅ Documentation
+# Why This Project Can Score Well
 
-### Final Submission File Name
+✅ Directly solves SDG 4 (Quality Education)
 
-```text
-SDG_EduAI_KaranLingayat.pdf
-```
+✅ Uses AI (Gemini)
 
-This project is simple enough to build in Android Studio + Firebase, clearly uses AI, aligns perfectly with SDG 4, and can score highly because it demonstrates a working AI chatbot, quiz generation, and personalized learning features.
+✅ Easy to build in 1–3 days
+
+✅ Has multiple AI features
+
+✅ Looks professional for college submission
+
+✅ Easy to deploy on [Vercel](https://vercel.com?utm_source=chatgpt.com) or [Netlify](https://www.netlify.com?utm_source=chatgpt.com)
+
+For the fastest completion, build **KaranEDU using React + Supabase + Gemini API**, then generate the report PDF and GitHub repository for submission.
