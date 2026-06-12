@@ -1,0 +1,77 @@
+Create a highly polished, responsive, and fully interactive single-page marketing and product playground website for "KaranEDU" — a next-generation, offline-first AI educational assistant aligning with UN Sustainable Development Goal 4 (Quality Education).
+
+The design should feel premium, fluid, and dark-themed, matching the Android application's color scheme: Slate Gray backgrounds, bright Violet/Blue brand colors, and glowing Amber/Orange accents. Use Lucide icons, Tailwind CSS, and Framer Motion (or equivalent smooth Web Animation API) for satisfying transitions, hovered micro-animations, and parallax scroll effects.
+
+---
+
+### 🎨 Visual Theme & Palette (Slate & Amber)
+- Primary Canvas: Dark Slate (`#0B0F19` to `#1E293B`)
+- Brand Accents: Bright Violet (`#7C3AED`), Deep Blue (`#2563EB`)
+- Warning & Highlight Accents: Vibrant Amber (`#F59E0B`), warm Orange (`#EA580C`)
+- Typography: High-contrast, clean sans-serif headings paired with monospace fonts for status/statistic displays. Use generous padding, rounded cards (`rounded-2xl`), and subtle neon glassmorphism borders (`backdrop-blur-md`).
+
+---
+
+### 🧱 Website Section Structure
+
+#### 1. Header (Navigation & Identity)
+- Sticky nav with glassmorphism background (`backdrop-blur-md`).
+- Left: Brand name "KaranEDU" with an animated school graduation-cap icon that rotates 10 degrees on hover.
+- Right: Quick Links ("Features", "Interactive Demo", "Tech Stack", "Download APK") and a CTA button "Download App" highlighting in bright Amber.
+
+#### 2. Hero Section (Dynamic Attraction)
+- **Big Heading**: "Personalized AI Tutoring. Offline-First. Accessible to All." styled in a vertical gradient.
+- **Subheading**: "Bridging the gap in educational quality globally. KaranEDU combines the Power of Google Gemini AI with local Room DB caching, bringing premium diagnostic learning to any device — even when completely offline."
+- **CTAs**:
+  - Primary button: "Download Android APK" (glowing hover effect, custom download icon).
+  - Secondary button: "Try Interactive Demo" (smooth scroll down to Section 4).
+- **Hero Visual**: An animated high-fidelity mock-up of an Android device displaying the KaranEDU App screen. Make sure the buttons (Chat, Study Planner, Quiz, Flashcards) glow on page load.
+
+#### 3. Core Capabilities Grid (Interactive Feature Cards)
+Create an animated 3-column grid. Each card must scale on hover (`hover:-translate-y-2 transition-all duration-300`) with custom visual indicators:
+- **Card A: Personal AI Tutor (Gemini Powered)**
+  - Icon: Sparkling Chat Bubble.
+  - Text: Detailed inquiry answering aligned to custom grade-levels.
+- **Card B: AI Diagnostic Quizzes**
+  - Icon: Shield Checkmark.
+  - Text: Automatically generated exams with instant breakdown, feedback, and diagnostic scorecards.
+- **Card C: Spaced-Repetition Flashcards**
+  - Icon: Double-sided Flipping Cards.
+  - Text: Interactive flip cards created dynamically by AI for bite-sized learning summaries.
+- **Card D: Smart Daily Planner**
+  - Icon: Calendar Schedule.
+  - Text: Custom tracks for Mathematics, Physics, and Essay preparation with local checklist memory.
+- **Card E: Secure SQLite Metadata & Cloud Sync**
+  - Icon: Cloud & Database Link.
+  - Text: Local Room persistence syncing securely to Firebase-backed Firestore when connectivity resumes.
+
+#### 4. The Interactive 'Live Live' App Playground (CRITICAL FEATURE!)
+Build a highly functional web-based simulator representing the core features of the KaranEDU mobile app. Users must be able to switch active tabs within the simulator component:
+- **Tab 1: Chat Tutor Simulator**
+  - A chat room interface. Let users click predefined mock queries (e.g., "Explain Quantum Physics simply" or "Give me a mnemonic for the Krebs Cycle").
+  - On click, show a realistic typewriter-style streaming AI response explaining the scientific concepts, formatted cleanly.
+- **Tab 2: Diagnostic Quiz Trial**
+  - An interactive 3-question mock Quiz. Let the user actively select options (A, B, or C).
+  - On submitting their selections, play an animation displaying instant correction states: Red for incorrect, Green with a confetti pop for correct answers, accompanied by a detailed diagnostic text explanation.
+- **Tab 3: Spaced-Repetition Flashcards**
+  - Render an elegant card layout. Let the user click/tap to flip the card using a 3D perspective CSS flip transition.
+  - Front: Ask a question (e.g., "What is the primary function of Mitochondria?").
+  - Back: Answer ("Produces ATP via aerobic cellular respiration."). Include 'Easy', 'Medium', and 'Hard' rating buttons.
+- **Tab 4: Smart Scheduler**
+  - Render a study board layout. Let users click to toggle checkboxes for pre-filled tasks (e.g., "Read Physics Chapter 3", "Complete Calculus Diagnostic Drill"). Update a visual progression gauge concurrently.
+
+#### 5. Technical Architecture Breakdown & Repository Overview
+Showcase the tech stack using interactive cards:
+- **Kotlin & Jetpack Compose**: Highlighting M3 design layouts, adaptive device screens, and edge-to-edge support.
+- **Room SQLite**: Displaying a simple schematic illustration of how data caches locally.
+- **Google Gemini SDK**: Visual representation of the API payload request structure.
+- **Firebase Onboarding**: User-auth flows with credentials synchronized securely.
+- Include a tree folder structure showcasing code clean architecture directories (`/ui/screens`, `/data/database`, `/theme`).
+
+#### 6. Global Impact Section (UN SDG Goal 4)
+- An inspiring clean panel illustrating how KaranEDU addresses inequality in global education by removing internet barriers and providing premium customized tutoring completely free and offline-first.
+
+#### 7. Download Footer & System Setup Guidelines
+- Clear download section providing options: "Download APK", "Download Source Code Project (ZIP)", "View GitHub Repository".
+- Clear documentation segment on how developers can configure `.env` with their personal `GEMINI_API_KEY` to run the project.
+- Footer with credits, copyright, social links (Twitter/X, GitHub, LinkedIn), and a glowing green "System Online" backend status indicator.
