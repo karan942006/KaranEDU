@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>An offline-first personalized learning assistant designed to empower students worldwide, aligning with SDG 4 (Quality Education).</strong>
+  <strong>An Offline-first personalized learning assistant designed to empower students worldwide, aligning with SDG 4 (Quality Education).</strong>
 </p>
 
 <p align="center">
