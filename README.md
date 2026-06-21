@@ -109,7 +109,7 @@ Import the project into **Android Studio** and click **Run**. Gradle will automa
 
 ---
 
-## 🌍 Sustainable Development Goal Alignment (SDG 4)
+## 🌍 Sustainable Development Goal Alignment (SDG  4)
 
 **KaranEDU** addresses the inequality in educational resource distribution by providing free, localized, and context-aware artificial intelligence tutoring. By offering **offline-first offline cache capabilities** via SQLite/Room database, we reduce internet accessibility barriers, bringing world-class adaptive education even to underserved and disconnected communities globally.
 
